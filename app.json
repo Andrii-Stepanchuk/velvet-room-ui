@@ -26,7 +26,6 @@
     },
     "plugins": [
       "expo-font",
-      "expo-secure-store",
       "expo-sqlite",
       "./plugins/withAndroidLocalProperties"
     ],
