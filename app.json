@@ -1,0 +1,37 @@
+{
+  "expo": {
+    "name": "Velvet Room",
+    "slug": "velvet-room",
+    "scheme": "velvetroom",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "dark",
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.stepanchuk.velvetroom"
+    },
+    "android": {
+      "package": "com.stepanchuk.velvetroom",
+      "adaptiveIcon": {
+        "backgroundColor": "#04060d",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "predictiveBackGestureEnabled": false
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "expo-font",
+      "expo-secure-store",
+      "expo-sqlite",
+      "./plugins/withAndroidLocalProperties"
+    ],
+    "experiments": {
+      "tsconfigPaths": true
+    }
+  }
+}
