@@ -27,7 +27,8 @@
     "plugins": [
       "expo-font",
       "expo-sqlite",
-      "./plugins/withAndroidLocalProperties"
+      "./plugins/withAndroidLocalProperties",
+      "expo-video"
     ],
     "experiments": {
       "tsconfigPaths": true
