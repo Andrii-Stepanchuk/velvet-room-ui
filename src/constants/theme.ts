@@ -1,8 +1,9 @@
-import { colors as rawColors, background, fonts as rawFonts } from './tokens.cjs';
+import { colors as rawColors, background, glow, radius as rawRadius } from './tokens.cjs';
 
 export const colors = {
   ...rawColors,
-  bg: background,
+  background,
+  glow,
 } as const;
 
-export const fonts = rawFonts;
+export const radius = rawRadius;

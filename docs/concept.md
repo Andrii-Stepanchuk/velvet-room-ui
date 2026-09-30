@@ -2,7 +2,7 @@
 
 **RPG self-improvement app · Android · Version 1 (MVP) with room to grow**
 
-Velvet Room reframes everyday personal growth as a Persona-style role-playing game. The player levels up five **life stats** by completing real-world **quests**, and tracks their real relationships as **bonds**. A lunar cycle gives each day a rhythm: the evening **Dark Hour** and **Full Moon** days grant temporary XP boosts.
+Velvet Room reframes everyday personal growth as a Persona-3-reload-style role-playing game. The player levels up five **life stats** by completing real-world **quests**, and tracks their real relationships as **bonds**. A lunar cycle gives each day a rhythm: the evening **Dark Hour** and **Full Moon** days grant temporary XP boosts.
 
 This document defines the *language*, the *core concepts*, and the *rules* of the app from a product point of view. It deliberately leaves out UI/screen requirements. Everything marked **tunable** is a starting value meant to live in central configuration so it can be balanced without code changes.
 

@@ -1,4 +1,6 @@
-const { colors, background, fonts } = require('./src/constants/tokens.cjs');
+const { colors, background, glow, fonts, fontSize, tracking, radius } = require('./src/constants/tokens.cjs');
+
+const px = (scale) => Object.fromEntries(Object.entries(scale).map(([k, v]) => [k, `${v}px`]));
 
 module.exports = {
   content: ['./App.tsx', './src/**/*.{js,jsx,ts,tsx}'],
@@ -8,18 +10,29 @@ module.exports = {
       colors: {
         accent: colors.accent,
         danger: colors.danger,
+        white: colors.white,
+        ink: colors.ink,
         primary: colors.textPrimary,
         secondary: colors.textSecondary,
         tertiary: colors.textTertiary,
-        background: background,
+        muted: colors.textMuted,
+        hint: colors.textHint,
+        disabled: colors.textDisabled,
+        background,
+        glow,
       },
       fontFamily: {
         display: [fonts.display],
+        'display-italic': [fonts.displayItalic],
         'display-medium': [fonts.displayMedium],
         body: [fonts.body],
+        'body-italic': [fonts.bodyItalic],
         'body-medium': [fonts.bodyMedium],
         'body-bold': [fonts.bodyBold],
       },
+      fontSize: px(fontSize),
+      letterSpacing: px(tracking),
+      borderRadius: px(radius),
     },
   },
   plugins: [],
