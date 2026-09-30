@@ -11,6 +11,7 @@ export const TIMING_MS = {
   outroLeadBeforeClipEnd: 420,
   outroFlashIn: 420,
   welcomeFade: 900,
+  welcomeHold: 2200,
   skipFlashIn: 250,
   noClipHold: 650,
   clipStartTimeout: 2500,

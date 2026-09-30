@@ -6,6 +6,6 @@ module.exports = function (api) {
       'nativewind/babel',
     ],
     // Reanimated 4 ships its Babel plugin via react-native-worklets. Must be listed last.
-    plugins: ['react-native-worklets/plugin'],
+    plugins: [['inline-import', { extensions: ['.sql'] }], 'react-native-worklets/plugin'],
   };
 };

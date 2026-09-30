@@ -6,7 +6,7 @@ let _db: ReturnType<typeof drizzle> | null = null;
 
 export function getDb() {
   if (!_db) {
-    const sqlite = openDatabaseSync('velvet-room.db');
+    const sqlite = openDatabaseSync('velvet-room.db', { enableChangeListener: true });
     _db = drizzle(sqlite, { schema });
   }
   return _db;

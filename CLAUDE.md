@@ -10,7 +10,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Current state (important)
 
-This is an early scaffold. The actual `src/` tree is minimal — only `constants/`, `navigation/`, `lib/db/`, `lib/data/`, `components/ui/` (general-purpose UI), and `pages/auth/RegisterPage.tsx` (the animated entrance/register screen, with its components in `pages/auth/components/`, hooks in `pages/auth/hooks/` and config in `pages/auth/config/`). `RootNavigator` shows only the Register screen. `schema.ts` and `repositories.ts` are empty; `config.ts` is an empty object. Verify against the actual files before assuming something exists — the eventual plan (per `docs/concept.md`) reaches well beyond what's currently coded.
+This is an early scaffold. The actual `src/` tree is minimal — only `constants/`, `navigation/`, `lib/db/`, `lib/data/`, `hooks/` (shared hooks), `components/ui/` (general-purpose UI, including `UnderwaterBackground`), `pages/auth/RegisterPage.tsx` (the animated entrance/register screen, with its components in `pages/auth/components/`, hooks in `pages/auth/hooks/` and config in `pages/auth/config/`), and a placeholder `pages/home/HomePage.tsx` with a delete-account button that erases the player row and resets to Register. The only table is `player` (one row, the name). `RootNavigator` opens on Home when a player row exists, otherwise on Register; Register saves the name on submit and replaces itself with Home after the welcome reveal. `UnderwaterBackground` is rendered once in `App.tsx` behind the navigator; the navigation theme and `contentStyle` are transparent, so screens must not paint their own full-screen background. `config.ts` is an empty object. Verify against the actual files before assuming something exists — the eventual plan (per `docs/concept.md`) reaches well beyond what's currently coded.
 
 ## Commands
 
@@ -21,6 +21,7 @@ npm run ios               # native iOS build/run
 npm run web               # web preview
 npx tsc --noEmit          # typecheck — the current CI-equivalent quality gate
 npx expo export --platform android   # bundle-verify: confirms Babel/worklets, NativeWind transform, aliases, fonts all resolve
+npm run db:generate       # drizzle-kit: regenerate drizzle/ migrations after editing schema.ts
 ```
 
 There is **no test runner or linter configured yet** (Jest is planned per STATUS.md but not installed). `tsc --noEmit` is the gate for now.
@@ -52,7 +53,10 @@ There is **no test runner or linter configured yet** (Jest is planned per STATUS
 - **Hooks:** the page's hooks (state, animation, sequencing) live in `pages/auth/hooks/`, each file named after the hook it exports (or the hook family, e.g. `useBubbles`). Component files hold only markup and styles.
 
 ### Data
-- **Local DB:** expo-sqlite + Drizzle ORM. Always go through `getDb()` in `src/lib/db/client.ts`, which lazily opens `velvet-room.db`. The schema goes in `src/lib/db/schema.ts`. Migrations use drizzle-kit, which is installed but has no `drizzle.config.ts` yet.
+- **Local DB:** expo-sqlite + Drizzle ORM. Always go through `getDb()` in `src/lib/db/client.ts`, which lazily opens `velvet-room.db`. The schema goes in `src/lib/db/schema.ts`, and data access is split per table.
+  - **Repositories:** one file per table in `src/lib/data/repositories/` (e.g. `playerRepository.ts`), re-exported from its `index.ts`. They run synchronous drizzle calls through `getDb()`.
+  - **Hooks:** each repository has a matching hook in `src/lib/data/hooks/` (e.g. `usePlayer`). The hook returns live data via drizzle's `useLiveQuery`, which needs `enableChangeListener` on the connection in `client.ts`, plus the repository's write actions. Screens use the hooks, not the repositories. A hook's query can only run after migrations, so call it only below the migration gate in `App.tsx` (that's why `RootNavigator` picks the initial route).
+- **Migrations:** after changing the schema, run `npm run db:generate` and commit the generated `drizzle/` folder, including `migrations.js`. `useDatabaseReady` (`src/lib/db/`) applies pending migrations at boot, and `App.tsx` renders nothing until they finish. The `.sql` files are bundled by `babel-plugin-inline-import` (in `babel.config.js`, before the worklets plugin) plus `sourceExts.push('sql')` in `metro.config.js`. Restart Metro with `--clear` after changing either file.
 - **Client state:** Zustand (installed, no stores yet).
 - **Planned:** a cloud source of truth mirrored into local SQLite for offline reads and writes. A thin sync layer keeps them aligned (write-through on change, pull on login). The game engine (concept §4 math) will be pure TypeScript over the local mirror.
 

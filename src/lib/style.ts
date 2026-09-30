@@ -1,4 +1,4 @@
-import type { TextStyle, ViewStyle } from 'react-native';
+import { PixelRatio, type TextStyle, type ViewStyle } from 'react-native';
 
 import { colors } from '@/constants/theme';
 
@@ -22,5 +22,7 @@ export function glowShadow(
 
 export const textGlow: TextStyle = {
   textShadowColor: withAlpha(colors.glow[400], 0.6),
-  textShadowRadius: 28,
+  textShadowRadius: 8,
 };
+
+export const pixelAlignedBorderWidth = PixelRatio.roundToNearestPixel(1);

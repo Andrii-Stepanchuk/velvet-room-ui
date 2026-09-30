@@ -8,27 +8,26 @@ import { Flash } from './components/Flash';
 import { RegisterForm } from './components/RegisterForm/RegisterForm';
 import { SkipButton } from './components/SkipButton';
 import { TitleBlock } from './components/TitleBlock';
-import { UnderwaterBackground } from './components/UnderwaterBackground/UnderwaterBackground';
 import { VelvetDoor } from './components/VelvetDoor/VelvetDoor';
 import { WelcomeBlock } from './components/WelcomeBlock';
 import { CLIP_FIRST_FRAME_COLOR, ENTRANCE_VIDEO_SOURCE } from './config/entranceVideo';
 import { useEntranceLayerStyles } from './hooks/useEntranceLayerStyles';
 import { useEntranceSequence } from './hooks/useEntranceSequence';
+import { usePlayerRegistration } from './hooks/usePlayerRegistration';
 import { usePreloadedEntrancePlayer } from './hooks/usePreloadedEntrancePlayer';
 
 export function RegisterPage() {
   const insets = useSafeAreaInsets();
   const player = usePreloadedEntrancePlayer(ENTRANCE_VIDEO_SOURCE);
-  const seq = useEntranceSequence(player);
+  const { register, enterHome } = usePlayerRegistration();
+  const seq = useEntranceSequence(player, { onBegin: register, onComplete: enterHome });
   const { anim, phase } = seq;
   const atGate = phase === 'gate';
 
   const layer = useEntranceLayerStyles(anim);
 
   return (
-    <View className="flex-1 overflow-hidden bg-background-800">
-      <UnderwaterBackground />
-
+    <View className="flex-1 overflow-hidden">
       {(atGate || phase === 'opening') && (
         <Animated.View pointerEvents={atGate ? 'box-none' : 'none'} style={[StyleSheet.absoluteFill, layer.bubbles]}>
           <BubbleField />

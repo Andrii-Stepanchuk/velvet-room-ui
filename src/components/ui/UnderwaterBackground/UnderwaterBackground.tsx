@@ -5,7 +5,7 @@ import Animated from 'react-native-reanimated';
 
 import { colors } from '@/constants/theme';
 import { withAlpha } from '@/lib/style';
-import { useDrift } from '../../hooks/useDrift';
+import { useDrift } from '@/hooks/useDrift';
 import { SoftGlow } from './SoftGlow';
 
 const WATER_COLORS = ['#1fd8e6', '#14a6dd', '#0e6fcf', '#0a44ab', '#072a7d', '#051a52', colors.background[800]] as const;

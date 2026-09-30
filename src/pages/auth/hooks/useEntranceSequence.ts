@@ -36,9 +36,17 @@ export interface EntranceSequence {
   anim: EntranceAnim;
 }
 
+export interface EntranceCallbacks {
+  onBegin: (name: string) => void;
+  onComplete: () => void;
+}
+
 const CLIP_ENABLED = ENTRANCE_VIDEO_SOURCE != null;
 
-export function useEntranceSequence(player: VideoPlayer): EntranceSequence {
+export function useEntranceSequence(
+  player: VideoPlayer,
+  { onBegin, onComplete }: EntranceCallbacks,
+): EntranceSequence {
   const [phase, setPhase] = useState<EntrancePhase>('gate');
   const [name, setName] = useState('');
   const reducedMotion = useReducedMotion();
@@ -101,7 +109,8 @@ export function useEntranceSequence(player: VideoPlayer): EntranceSequence {
     enterPhase('done');
     flashOpacity.value = withTiming(0, { duration: TIMING_MS.welcomeFade });
     welcomeOpacity.value = withTiming(1, { duration: TIMING_MS.welcomeFade });
-  }, [clearTimers, flashOpacity, player, enterPhase, welcomeOpacity]);
+    after(TIMING_MS.welcomeFade + TIMING_MS.welcomeHold, onComplete);
+  }, [after, clearTimers, flashOpacity, player, enterPhase, onComplete, welcomeOpacity]);
 
   const startOutro = useCallback(
     (duration: number) => {
@@ -170,6 +179,7 @@ export function useEntranceSequence(player: VideoPlayer): EntranceSequence {
     (playerName: string) => {
       const trimmed = playerName.trim();
       if (phaseRef.current !== 'gate' || trimmed.length === 0) return;
+      onBegin(trimmed);
       setName(trimmed);
       formOpacity.value = withTiming(0, { duration: TIMING_MS.formFade });
       formTranslate.value = withTiming(26, { duration: TIMING_MS.formFade });
@@ -178,6 +188,7 @@ export function useEntranceSequence(player: VideoPlayer): EntranceSequence {
         enterPhase('done');
         doorOpacity.value = withTiming(0, { duration: TIMING_MS.formFade });
         welcomeOpacity.value = withTiming(1, { duration: TIMING_MS.welcomeFade });
+        after(TIMING_MS.welcomeFade + TIMING_MS.welcomeHold, onComplete);
         return;
       }
 
@@ -196,6 +207,7 @@ export function useEntranceSequence(player: VideoPlayer): EntranceSequence {
       );
     },
     [
+      after,
       cameraScale,
       doorOpacity,
       doorProgress,
@@ -203,6 +215,8 @@ export function useEntranceSequence(player: VideoPlayer): EntranceSequence {
       formOpacity,
       formTranslate,
       glowOpacity,
+      onBegin,
+      onComplete,
       onFlashPeak,
       reducedMotion,
       enterPhase,

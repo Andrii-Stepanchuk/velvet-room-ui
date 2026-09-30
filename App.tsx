@@ -14,6 +14,9 @@ import {
   Barlow_500Medium,
   Barlow_700Bold,
 } from '@expo-google-fonts/barlow';
+import { useDatabaseReady } from '@/lib/db/useDatabaseReady';
+import { UnderwaterBackground } from '@/components/ui';
+import { colors } from '@/constants/theme';
 import { RootNavigator } from '@/navigation/RootNavigator';
 
 export default function App() {
@@ -27,12 +30,16 @@ export default function App() {
     Barlow_700Bold,
   });
 
-  if (!fontsLoaded) {
+  const db = useDatabaseReady();
+
+  if (db.error) throw db.error;
+  if (!fontsLoaded || !db.ready) {
     return null;
   }
 
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
+    <GestureHandlerRootView style={{ flex: 1, backgroundColor: colors.background[800] }}>
+      <UnderwaterBackground />
       <SafeAreaProvider>
         <StatusBar style="light" />
         <RootNavigator />

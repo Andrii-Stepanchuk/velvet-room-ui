@@ -2,6 +2,7 @@ const { getDefaultConfig } = require('expo/metro-config');
 const { withNativeWind } = require('nativewind/metro');
 
 const config = getDefaultConfig(__dirname);
+config.resolver.sourceExts.push('sql');
 
 // 16 keeps Tailwind's spacing scale on a 4px grid (NativeWind defaults to 14).
 // noinspection JSCheckFunctionSignatures
