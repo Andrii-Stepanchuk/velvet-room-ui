@@ -5,7 +5,6 @@ import { SkewPanel } from '@/components/ui';
 import { colors } from '@/constants/theme';
 import { ARCANA, type Arcana } from '@/lib/game';
 import { ARCANA_PLATE } from '../../config/arcanaSheet';
-import { ArcanaPips } from './ArcanaPips';
 
 export const NamePlate = memo(function NamePlate({ arcana }: { arcana: Arcana }) {
   const index = ARCANA.indexOf(arcana);
@@ -40,7 +39,6 @@ export const NamePlate = memo(function NamePlate({ arcana }: { arcana: Arcana })
           </Text>
         </View>
       </View>
-      <ArcanaPips index={index} count={ARCANA.length} className="mt-2.5 w-2/3" />
     </SkewPanel>
   );
 });

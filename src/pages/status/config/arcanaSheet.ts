@@ -87,5 +87,3 @@ export const ARCANA_ROW = {
   tagSlant: 12,
   bleed: PAGE_PADDING_X + slantOffset(56, 12),
 } as const;
-
-export const ARCANA_PIP_SPACING = 10;

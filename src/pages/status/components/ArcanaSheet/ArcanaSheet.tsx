@@ -46,17 +46,6 @@ export const ArcanaSheet = memo(function ArcanaSheet({
       </Animated.View>
       <Animated.View pointerEvents="box-none" style={[styles.sheet, { height: height + ARCANA_SHEET.lift }, sheet]}>
         <SheetSurface width={width} height={height + rise} rise={rise} top={ARCANA_SHEET.lift - rise} />
-        <Animated.View pointerEvents="none" style={[styles.title, layers.title]}>
-          <Text
-            ref={titleRef}
-            accessibilityRole="header"
-            maxFontSizeMultiplier={1}
-            className="font-display-italic text-4xl text-white"
-            style={TITLE_STYLE}
-          >
-            ARCANA
-          </Text>
-        </Animated.View>
         <Animated.ScrollView
           onScroll={onScroll}
           scrollEventThrottle={16}
@@ -70,6 +59,17 @@ export const ArcanaSheet = memo(function ArcanaSheet({
             <ArcanaListRow key={a.id} arcana={a} current={a.id === arcana.id} />
           ))}
         </Animated.ScrollView>
+        <Animated.View pointerEvents="none" style={[styles.title, layers.title]}>
+          <Text
+            ref={titleRef}
+            accessibilityRole="header"
+            maxFontSizeMultiplier={1}
+            className="font-display-italic text-4xl text-white"
+            style={TITLE_STYLE}
+          >
+            ARCANA
+          </Text>
+        </Animated.View>
         <View style={[styles.back, { bottom: insets.bottom + ARCANA_SHEET.backBottom }]}>
           <BackTab onPress={onClose} />
         </View>
