@@ -33,6 +33,7 @@ export const MenuList = memo(function MenuList({
           index={index}
           selected={index === selected}
           progress={progress}
+          shake={shake}
           onPress={onPress}
         />
       ))}
