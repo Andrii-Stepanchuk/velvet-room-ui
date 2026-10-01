@@ -1,26 +1,39 @@
 import { memo } from 'react';
 import { View } from 'react-native';
+import type { SharedValue } from 'react-native-reanimated';
 
 import { MoonDisc } from '@/components/ui';
 import { colors } from '@/constants/theme';
 import { moonDialLabel } from '@/lib/format';
-import type { MoonState } from '@/lib/game';
+import type { Boosts, LunarCycle, MoonState } from '@/lib/game';
 import { glowShadow } from '@/lib/style';
 import { MOON_DISC_RATIO } from '../../config/statusLayout';
+import { dialAngle, dialBand } from '../../hooks/useMoonDial';
+import { useMoonAura } from '../../hooks/useMoonAura';
+import { DialSweep } from './DialSweep';
+import { MoonCorona } from './MoonCorona';
 import { MoonDial } from './MoonDial';
 
 const DISC_GLOW = glowShadow(colors.glow[300], { opacity: 0.5, radius: 30, elevation: 12 });
 
 export const MoonEmblem = memo(function MoonEmblem({
   moon,
+  cycle,
   size,
   daysUntilFullMoon,
+  boosts,
+  progress,
 }: {
   moon: MoonState;
+  cycle: LunarCycle;
   size: number;
   daysUntilFullMoon: number;
+  boosts: Boosts;
+  progress: SharedValue<number>;
 }) {
   const disc = size * MOON_DISC_RATIO;
+  const band = dialBand(size);
+  const aura = useMoonAura(progress, boosts, dialAngle(cycle.newMoonIndex / cycle.length));
   return (
     <View
       style={{ width: size, height: size }}
@@ -29,7 +42,9 @@ export const MoonEmblem = memo(function MoonEmblem({
       accessibilityRole="image"
       accessibilityLabel={moonDialLabel(moon.name, daysUntilFullMoon)}
     >
-      <MoonDial size={size} moon={moon} />
+      {aura.intensity > 0 && <MoonCorona size={size} style={aura.corona} />}
+      <MoonDial size={size} cycle={cycle} fullMoon={boosts.fullMoon} />
+      {boosts.fullMoon && <DialSweep size={size} radius={band.radius} width={band.width} style={aura.sweep} />}
       <View style={[DISC_GLOW, { width: disc, height: disc, borderRadius: disc / 2, backgroundColor: colors.ink }]}>
         <MoonDisc size={disc} illumination={moon.illumination} waxing={moon.waxing} />
       </View>

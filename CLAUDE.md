@@ -58,7 +58,7 @@ There is **no test runner or linter configured yet** (Jest is planned per STATUS
   - **Repositories:** one file per table in `src/lib/data/repositories/` (e.g. `playerRepository.ts`), re-exported from its `index.ts`. They run synchronous drizzle calls through `getDb()`.
   - **Hooks:** each repository has a matching hook in `src/lib/data/hooks/` (e.g. `usePlayer`). The hook returns live data via drizzle's `useLiveQuery`, which needs `enableChangeListener` on the connection in `client.ts`, plus the repository's write actions. Screens use the hooks, not the repositories. A hook's query can only run after migrations, so call it only below the migration gate in `App.tsx` (that's why `RootNavigator` picks the initial route).
 - **Migrations:** after changing the schema, run `npm run db:generate` and commit the generated `drizzle/` folder, including `migrations.js`. `useDatabaseReady` (`src/lib/db/`) applies pending migrations at boot, and `App.tsx` renders nothing until they finish. The `.sql` files are bundled by `babel-plugin-inline-import` (in `babel.config.js`, before the worklets plugin) plus `sourceExts.push('sql')` in `metro.config.js`. Restart Metro with `--clear` after changing either file.
-- **Client state:** Zustand (installed, no stores yet).
+- **Client state:** Zustand. `src/lib/state/boostOverrides.ts` holds the dev-only Force Full Moon / Force Dark Hour switches (Settings → TESTING, `__DEV__` only) that `useLunarDay` applies to every screen.
 - **Planned:** a cloud source of truth mirrored into local SQLite for offline reads and writes. A thin sync layer keeps them aligned (write-through on change, pull on login). The game engine (concept §4 math) will be pure TypeScript over the local mirror.
 
 ### Native dirs

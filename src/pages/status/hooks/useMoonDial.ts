@@ -1,10 +1,10 @@
 import { useMemo } from 'react';
 
-import { CONFIG } from '@/constants/config';
-import { FULL_MOON_HALF_WINDOW, type MoonState } from '@/lib/game';
+import type { LunarCycle } from '@/lib/game';
+import { BOOST_FX } from '../config/boostFx';
 import { MOON_DIAL, MOON_DISC_RATIO } from '../config/statusLayout';
 
-export type DialTone = 'lit' | 'litEvent' | 'ahead' | 'aheadEvent';
+export type DialTone = 'lit' | 'litEvent' | 'ahead';
 
 export interface DialSegment {
   x1: number;
@@ -17,12 +17,10 @@ export interface DialTick extends DialSegment {
   tone: DialTone;
 }
 
-const DAYS = Math.ceil(CONFIG.moon.synodicDays);
-const NEW_MOON = 0;
-const FULL_MOON = 0.5;
+const FULL_MOON = 0;
 
 function polar(center: number, radius: number, fraction: number) {
-  const angle = (fraction + 0.5) * 2 * Math.PI;
+  const angle = fraction * 2 * Math.PI;
   return { x: center + radius * Math.sin(angle), y: center - radius * Math.cos(angle) };
 }
 
@@ -37,35 +35,41 @@ function diamond(center: number, radius: number, fraction: number, half: number)
   return `${x},${y - half} ${x + half},${y} ${x},${y + half} ${x - half},${y}`;
 }
 
-function isEventDay(fraction: number): boolean {
-  return fraction >= FULL_MOON - FULL_MOON_HALF_WINDOW && fraction < FULL_MOON + FULL_MOON_HALF_WINDOW;
+export function dialAngle(fraction: number): number {
+  return fraction * 360 - 90;
 }
 
-export function useMoonDial(size: number, moon: MoonState) {
-  const { age, cycleProgress } = moon;
+export function dialBand(size: number) {
+  const inner = (size * MOON_DISC_RATIO) / 2 + MOON_DIAL.gap;
+  const outer = size / 2 - MOON_DIAL.edge;
+  return { inner, outer, radius: (inner + outer) / 2, width: outer - inner };
+}
+
+export function useMoonDial(size: number, cycle: LunarCycle) {
+  const { length, dayIndex, newMoonIndex } = cycle;
 
   return useMemo(() => {
     const center = size / 2;
-    const inner = (size * MOON_DISC_RATIO) / 2 + MOON_DIAL.gap;
-    const outer = center - MOON_DIAL.edge;
-    const mid = (inner + outer) / 2;
+    const { inner, outer, radius: mid, width } = dialBand(size);
     const half = MOON_DIAL.tickLength / 2;
+    const tickAt = (day: number) => segment(center, mid - half, mid + half, day / length);
 
-    const ticks: DialTick[] = Array.from({ length: DAYS }, (_, day) => {
-      const fraction = day / CONFIG.moon.synodicDays;
-      const event = isEventDay(fraction);
-      const tone: DialTone = day <= age ? (event ? 'litEvent' : 'lit') : event ? 'aheadEvent' : 'ahead';
-      return { ...segment(center, mid - half, mid + half, fraction), tone };
-    });
+    const ticks: DialTick[] = Array.from({ length }, (_, day) => ({
+      ...tickAt(day),
+      tone: day === 0 ? 'litEvent' : day <= dayIndex ? 'lit' : 'ahead',
+    }));
 
     return {
       center,
-      band: { radius: mid, width: outer - inner },
+      inner,
+      band: { radius: mid, width },
       rim: outer,
       ticks,
-      today: segment(center, inner - MOON_DIAL.todayOverhang, outer + MOON_DIAL.todayOverhang, cycleProgress),
+      eventTicks: [tickAt(0)],
+      today: segment(center, inner - MOON_DIAL.todayOverhang, outer + MOON_DIAL.todayOverhang, dayIndex / length),
       fullMarker: diamond(center, outer, FULL_MOON, MOON_DIAL.fullMarker),
-      newMarker: diamond(center, outer, NEW_MOON, MOON_DIAL.newMarker),
+      newMarker: diamond(center, outer, newMoonIndex / length, MOON_DIAL.newMarker),
+      fullMarkerHalo: diamond(center, outer, FULL_MOON, MOON_DIAL.fullMarker * BOOST_FX.fullMarkerHalo),
     };
-  }, [size, age, cycleProgress]);
+  }, [size, length, dayIndex, newMoonIndex]);
 }

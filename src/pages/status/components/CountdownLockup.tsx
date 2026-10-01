@@ -3,9 +3,10 @@ import { Text, View } from 'react-native';
 
 import type { Boosts } from '@/lib/game';
 import { countdownCopy } from '@/lib/format';
-import { textShade } from '@/lib/style';
+import { textGlow, textShade } from '@/lib/style';
 
 const NUMERAL_STYLE = [textShade, { lineHeight: 64 }];
+const NUMERAL_GLOW_STYLE = [textGlow, { lineHeight: 64 }];
 const UNIT_STYLE = [textShade, { lineHeight: 24 }];
 const MAX_SCALE = 1.15;
 
@@ -19,7 +20,11 @@ export const CountdownLockup = memo(function CountdownLockup({
   const { value, unit, caption, label } = countdownCopy(daysUntilFullMoon, boosts);
   return (
     <View accessible accessibilityRole="header" accessibilityLabel={label} className="flex-row items-center self-center">
-      <Text maxFontSizeMultiplier={MAX_SCALE} className="font-display-italic text-3xl text-white" style={NUMERAL_STYLE}>
+      <Text
+        maxFontSizeMultiplier={MAX_SCALE}
+        className="font-display-italic text-3xl text-white"
+        style={boosts.darkHour ? NUMERAL_GLOW_STYLE : NUMERAL_STYLE}
+      >
         {value}
       </Text>
       <View className="ml-3">

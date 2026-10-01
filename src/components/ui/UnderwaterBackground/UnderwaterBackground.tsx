@@ -6,7 +6,9 @@ import Animated from 'react-native-reanimated';
 import { colors } from '@/constants/theme';
 import { withAlpha } from '@/lib/style';
 import { useDrift } from '@/hooks/useDrift';
-import { SoftGlow } from './SoftGlow';
+import { useLunarDay } from '@/hooks/useLunarDay';
+import { SoftGlow } from '../SoftGlow';
+import { DarkHourVeil } from './DarkHourVeil';
 
 const WATER_COLORS = ['#1fd8e6', '#14a6dd', '#0e6fcf', '#0a44ab', '#072a7d', '#051a52', colors.background[800]] as const;
 const WATER_LOCATIONS = [0, 0.09, 0.22, 0.4, 0.6, 0.78, 1] as const;
@@ -16,6 +18,7 @@ export const UnderwaterBackground = memo(function UnderwaterBackground() {
   const causticA = useDrift(width * 0.06, 14000);
   const causticB = useDrift(width * 0.06, 19000, 3000);
   const fog = useDrift(width * 0.05, 15000, 1000);
+  const { boosts } = useLunarDay();
 
   return (
     <>
@@ -54,6 +57,8 @@ export const UnderwaterBackground = memo(function UnderwaterBackground() {
       >
         <SoftGlow width={width * 1.2} height={height * 0.4} color="#5aaaff" opacity={0.16} />
       </Animated.View>
+
+      <DarkHourVeil active={boosts.darkHour} width={width} height={height} />
 
       <LinearGradient
         pointerEvents="none"

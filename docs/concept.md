@@ -25,7 +25,7 @@ This document defines the *language*, the *core concepts*, and the *rules* of th
 | **Boost** | A temporary condition that raises the XP a quest awards. Two exist in V1: **Dark Hour** and **Full Moon**. |
 | **Multiplier** | The factor a boost contributes (e.g. ×1.5). With no boost active, the multiplier is `1.0`. |
 | **Dark Hour** | An evening **window** during which completed quests earn extra XP. Named after Persona 3's hidden hour. |
-| **Full Moon** | A whole **day** on which quests earn a larger, all-day boost, driven by the moon phase. |
+| **Full Moon** | A whole **day** on which quests earn a larger, all-day boost: the local calendar day that contains the real full-moon moment. |
 | **Moon Phase** | The current step of an 8-phase lunar cycle (New → … → Full → … → Waning Crescent). Drives atmosphere and the Full Moon boost. |
 | **Bond** (Social Link) | A tracked real relationship. Has a rank from 0–10 shown as **pips**, a short note, a color, and an **Arcana**. |
 | **Arcana** | A thematic card identity attached to a bond (e.g. *The Compass*). **Cosmetic in V1**; reserved to carry gameplay meaning later. |
@@ -99,7 +99,7 @@ Every bond carries an **Arcana** — a thematic card identity like *The Compass*
 An 8-phase moon runs continuously and sets the daily mood. Two conditions turn it into real stakes:
 
 - **Dark Hour** — an evening window (default 21:00–24:00) when completed quests earn extra XP. It rewards finishing the day strong.
-- **Full Moon** — special days, a few times a month, when quests earn a bigger all-day boost.
+- **Full Moon** — one special day per lunar month, when quests earn a bigger all-day boost.
 
 **Why it matters:** without rhythm every day feels identical. The Dark Hour rewards evening follow-through; Full Moon days become anticipated "events" that create natural engagement spikes and make timing feel meaningful.
 
@@ -164,7 +164,7 @@ Eight phases drive the mood and the Full Moon boost:
 | 2 | First Quarter | 6 | Last Quarter |
 | 3 | Waxing Gibbous | 7 | Waning Crescent |
 
-**Recommended for V1:** compute the *real* phase from the device date so the in-app moon matches the sky — take the days since a known new moon, wrap them around the ≈29.53-day lunar cycle, and map the position to one of eight phases; the Full Moon is the middle of the cycle. A simplified fixed 28-day cycle is an acceptable placeholder if needed. Whichever is used, the header, the calendar, and the boost logic must all read from the **same** source so they never disagree.
+**V1:** compute the *real* phase from the device date so the in-app moon matches the sky. The four principal phases (New Moon, First Quarter, Full Moon, Last Quarter) are instants, computed with Meeus' true-phase algorithm (*Astronomical Algorithms*, ch. 49, accurate to about a minute). A principal phase names only the local calendar day that contains its instant; the days between take the intermediate names (Waxing Crescent, Waxing Gibbous, Waning Gibbous, Waning Crescent). The **Full Moon day** — the boost day — is therefore exactly one local calendar day per lunar cycle, and the countdown counts calendar days to it. The disc's lit fraction follows the cycle position between the true New and Full Moon instants. The header, the calendar, and the boost logic must all read from the **same** source so they never disagree.
 
 ### 4.5 The daily reset
 At local midnight: the day's quests reset to not-done; History advances to the new date and the moon phase is recomputed; the streak goes up if yesterday was fully cleared, or resets to zero if it wasn't. Past History is never changed — it is the permanent record.

@@ -13,9 +13,9 @@ export function isDarkHour(date: Date): boolean {
   return hour >= startHour && hour < endHour;
 }
 
-export function getBoosts(date: Date): Boosts {
+export function getBoosts(date: Date, force: { darkHour?: boolean } = {}): Boosts {
   const { darkHour: window, fullMoonMultiplier, cap } = CONFIG.boosts;
-  const darkHour = isDarkHour(date);
+  const darkHour = force.darkHour === true || isDarkHour(date);
   const fullMoon = isFullMoonDay(date);
   const raw = (darkHour ? window.multiplier : 1) * (fullMoon ? fullMoonMultiplier : 1);
   return { darkHour, fullMoon, multiplier: Math.min(raw, cap) };

@@ -58,7 +58,14 @@ export function StatusPage() {
       </Animated.View>
 
       <Animated.View onLayout={moonHandoff.onLayout} style={[styles.moon, moonHandoff.style]}>
-        <MoonEmblem moon={model.moon} size={moonSize} daysUntilFullMoon={model.daysUntilFullMoon} />
+        <MoonEmblem
+          moon={model.moon}
+          cycle={model.cycle}
+          size={moonSize}
+          daysUntilFullMoon={model.daysUntilFullMoon}
+          boosts={model.boosts}
+          progress={progress}
+        />
       </Animated.View>
 
       <Animated.View style={[styles.identity, layers.identity]}>

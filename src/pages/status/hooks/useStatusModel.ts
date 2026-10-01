@@ -6,7 +6,7 @@ import { questMessage, summarizeQuests, xpFraction, xpToNext } from '@/lib/game'
 
 export function useStatusModel() {
   const { player } = usePlayer();
-  const { now, moon, daysUntilFullMoon, boosts } = useLunarDay();
+  const { now, moon, cycle, daysUntilFullMoon, boosts } = useLunarDay();
   const { stats, overall, quests, streak, arcana } = useProgress();
   const name = player?.name ?? '';
 
@@ -16,6 +16,7 @@ export function useStatusModel() {
       name,
       now,
       moon,
+      cycle,
       daysUntilFullMoon,
       boosts,
       stats,
@@ -26,5 +27,5 @@ export function useStatusModel() {
       questSummary,
       questMessage: questMessage(questSummary, streak),
     };
-  }, [name, now, moon, daysUntilFullMoon, boosts, stats, overall, quests, streak, arcana]);
+  }, [name, now, moon, cycle, daysUntilFullMoon, boosts, stats, overall, quests, streak, arcana]);
 }

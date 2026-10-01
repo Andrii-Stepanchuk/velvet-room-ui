@@ -13,11 +13,13 @@ import type { RootStackParamList } from '@/navigation/navigation.types';
 import { BoostsSection } from './components/BoostsSection';
 import { EntranceSection } from './components/EntranceSection';
 import { ProfileSection } from './components/ProfileSection';
+import { TestingSection } from './components/TestingSection';
 import { useBoostRows } from './hooks/useBoostRows';
 import { useDeleteAccount } from './hooks/useDeleteAccount';
 import { useEntranceReplay } from './hooks/useEntranceReplay';
 import { useRename } from './hooks/useRename';
 import { useSettingsLayers } from './hooks/useSettingsLayers';
+import { useTestingRows } from './hooks/useTestingRows';
 
 export function SettingsPage() {
   const insets = useSafeAreaInsets();
@@ -29,6 +31,7 @@ export function SettingsPage() {
   const deleteAccount = useDeleteAccount(leave);
   const replayEntrance = useEntranceReplay(leave);
   const boostRows = useBoostRows(nextFullMoon, daysUntilFullMoon);
+  const testing = useTestingRows();
   const back = useCallback(() => navigation.goBack(), [navigation]);
 
   return (
@@ -56,6 +59,11 @@ export function SettingsPage() {
         <Animated.View style={[styles.section, layers.entrance]}>
           <EntranceSection onReplay={replayEntrance} />
         </Animated.View>
+        {__DEV__ && (
+          <Animated.View style={[styles.section, layers.entrance]}>
+            <TestingSection rows={testing.rows} onToggle={testing.toggle} />
+          </Animated.View>
+        )}
       </ScrollView>
       <Animated.View style={layers.back}>
         <BackHint onPress={back} />
