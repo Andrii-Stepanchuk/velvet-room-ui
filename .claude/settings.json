@@ -6,6 +6,7 @@
     "claude-md-management@claude-plugins-official": true,
     "expo@claude-plugins-official": true,
     "claude-code-setup@claude-plugins-official": true,
-    "superpowers@claude-plugins-official": true
+    "superpowers@claude-plugins-official": true,
+    "impeccable@impeccable": true
   }
 }

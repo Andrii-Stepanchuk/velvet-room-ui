@@ -23,6 +23,15 @@ import { useMoonSize } from './hooks/useMoonSize';
 import { useStatusLayers } from './hooks/useStatusLayers';
 import { useStatusModel } from './hooks/useStatusModel';
 
+const styles = StyleSheet.create({
+  moon: { alignSelf: 'center', marginTop: SECTION_GAP.moonTop },
+  identity: { marginTop: SECTION_GAP.identity },
+  xp: { marginTop: SECTION_GAP.xp },
+  stats: { marginTop: SECTION_GAP.stats },
+  quests: { marginTop: SECTION_GAP.quests },
+});
+
+
 export function StatusPage() {
   const insets = useSafeAreaInsets();
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList, 'Status'>>();
@@ -78,11 +87,3 @@ export function StatusPage() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  moon: { alignSelf: 'center', marginTop: SECTION_GAP.moonTop },
-  identity: { marginTop: SECTION_GAP.identity },
-  xp: { marginTop: SECTION_GAP.xp },
-  stats: { marginTop: SECTION_GAP.stats },
-  quests: { marginTop: SECTION_GAP.quests },
-});

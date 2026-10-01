@@ -25,6 +25,12 @@ export const textGlow: TextStyle = {
   textShadowRadius: 8,
 };
 
+export const textShade: TextStyle = {
+  textShadowColor: withAlpha(colors.background[700], 0.6),
+  textShadowOffset: { width: 0, height: 1 },
+  textShadowRadius: 6,
+};
+
 export const pixelAlignedBorderWidth = PixelRatio.roundToNearestPixel(1);
 
 export function skewX(deg: number): ViewStyle {

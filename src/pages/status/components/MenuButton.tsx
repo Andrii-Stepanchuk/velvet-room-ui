@@ -7,9 +7,16 @@ import { colors } from '@/constants/theme';
 export const MenuButton = memo(function MenuButton({ onPress }: { onPress: () => void }) {
   return (
     <Pressable onPress={onPress} hitSlop={8} accessibilityRole="button" accessibilityLabel="Open menu">
-      <SkewPanel fill={colors.textPrimary} className="px-6 py-2.5">
-        <Text className="font-display-italic text-sm tracking-sm text-ink">MENU ▸</Text>
-      </SkewPanel>
+      {({ pressed }) => (
+        <SkewPanel
+          fill={pressed ? colors.textPrimarySoft : colors.textPrimary}
+          shadow={colors.background[700]}
+          className="min-h-11 flex-row items-center px-6"
+        >
+          <Text className="font-display text-sm tracking-sm text-ink">MENU</Text>
+          <Text className="ml-2 font-display text-2xs text-ink">▶</Text>
+        </SkewPanel>
+      )}
     </Pressable>
   );
 });

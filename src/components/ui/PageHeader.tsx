@@ -2,9 +2,9 @@ import { memo } from 'react';
 import { Text, View } from 'react-native';
 
 import { formatDayLabel } from '@/lib/format';
-import { skewX, textGlow } from '@/lib/style';
+import { skewX, textShade } from '@/lib/style';
 
-const TITLE_STYLE = [skewX(-6), textGlow];
+const TITLE_STYLE = [skewX(-6), textShade, { lineHeight: 40 }];
 
 export const PageHeader = memo(function PageHeader({
   date,
@@ -17,11 +17,17 @@ export const PageHeader = memo(function PageHeader({
 }) {
   return (
     <View>
-      <Text className="font-display-medium text-xs tracking-lg text-secondary">{formatDayLabel(date)}</Text>
+      <Text className="font-display text-sm tracking-md text-white" style={textShade}>
+        {formatDayLabel(date)}
+      </Text>
       <Text className="mt-1 font-display-italic text-2xl text-white" style={TITLE_STYLE}>
         {title}
       </Text>
-      {subtitle && <Text className="mt-0.5 font-display-medium text-2xs tracking-md text-accent">{subtitle}</Text>}
+      {subtitle && (
+        <Text className="mt-1.5 font-display text-sm tracking-sm text-primary" style={textShade}>
+          {subtitle}
+        </Text>
+      )}
     </View>
   );
 });
