@@ -1,9 +1,9 @@
-export { BackHint } from './BackHint';
+export { BackTab } from './BackTab';
 export { DateTab } from './DateTab';
 export { EdgeTab } from './EdgeTab';
 export { MoonDisc } from './MoonDisc';
 export { NameInput } from './NameInput';
-export { PageHeader } from './PageHeader';
+export { PageHeader } from './PageHeader/PageHeader';
 export { SectionLabel } from './SectionLabel';
 export { SkewButton } from './SkewButton';
 export { SkewPanel } from './SkewPanel';

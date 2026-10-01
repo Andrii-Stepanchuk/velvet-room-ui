@@ -48,10 +48,10 @@ export function StatusPage() {
     >
       <View className="flex-1" importantForAccessibility={arcanaSheet.open ? 'no-hide-descendants' : 'auto'}>
         <View className="flex-row items-start justify-between">
-          <Animated.View style={layers.dateTab}>
+          <Animated.View onLayout={moonHandoff.onDateTabLayout} style={layers.dateTab}>
             <DateTab date={model.now} />
           </Animated.View>
-          <Animated.View style={layers.menuButton}>
+          <Animated.View onLayout={moonHandoff.onMenuButtonLayout} style={layers.menuButton}>
             <MenuButton onPress={openMenu} />
           </Animated.View>
         </View>
@@ -67,6 +67,7 @@ export function StatusPage() {
             daysUntilFullMoon={model.daysUntilFullMoon}
             boosts={model.boosts}
             progress={progress}
+            dialStyle={moonHandoff.dialStyle}
           />
         </Animated.View>
         <Animated.View style={[styles.moonCaption, layers.countdown]}>

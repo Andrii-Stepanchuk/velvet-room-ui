@@ -1,7 +1,7 @@
 import { memo } from 'react';
 import { Pressable, Text, View } from 'react-native';
 
-import { EdgeTab } from '@/components/ui';
+import { EdgeTab } from './EdgeTab';
 import { colors } from '@/constants/theme';
 import { pixelAlignedBorderWidth, withAlpha } from '@/lib/style';
 

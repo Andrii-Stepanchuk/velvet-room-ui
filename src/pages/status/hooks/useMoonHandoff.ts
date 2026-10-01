@@ -1,40 +1,66 @@
-import { useCallback } from 'react';
-import { useWindowDimensions, type LayoutChangeEvent } from 'react-native';
+import { useCallback, useEffect } from 'react';
+import type { LayoutChangeEvent } from 'react-native';
 import { Extrapolation, interpolate, useAnimatedStyle, useSharedValue, type SharedValue } from 'react-native-reanimated';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { HEADER_TOP, MENU_MOON_SIZE, PAGE_PADDING_X } from '@/constants/layout';
+import { EDGE_TAB_HEIGHT, HEADER_MOON_SIZE } from '@/constants/layout';
+import { useHeaderMoon } from '@/lib/state/headerMoon';
 import { MOON_DISC_RATIO } from '../config/statusLayout';
+import { MOON_HANDOFF } from '../config/statusTiming';
+
+const TARGET_Y = EDGE_TAB_HEIGHT / 2;
 
 export function useMoonHandoff(progress: SharedValue<number>, moonSize: number) {
-  const { width } = useWindowDimensions();
-  const insets = useSafeAreaInsets();
-  const offsetX = useSharedValue(0);
-  const offsetY = useSharedValue(0);
-  const targetX = width - PAGE_PADDING_X - MENU_MOON_SIZE / 2;
-  const targetY = insets.top + HEADER_TOP + MENU_MOON_SIZE / 2;
-  const endScale = MENU_MOON_SIZE / (moonSize * MOON_DISC_RATIO);
+  const headerCenterX = useHeaderMoon((state) => state.centerX);
+  const anchorX = useSharedValue(-1);
+  const tabsLeft = useSharedValue(0);
+  const tabsRight = useSharedValue(0);
+  const moonX = useSharedValue(0);
+  const moonY = useSharedValue(0);
+  const endScale = HEADER_MOON_SIZE / (moonSize * MOON_DISC_RATIO);
+
+  useEffect(() => {
+    anchorX.value = headerCenterX ?? -1;
+  }, [anchorX, headerCenterX]);
 
   const onLayout = useCallback(
     (e: LayoutChangeEvent) => {
-      const { x, y, width: w, height: h } = e.nativeEvent.layout;
-      offsetX.value = targetX - (x + w / 2);
-      offsetY.value = targetY - (y + h / 2);
+      const { x, y, width, height } = e.nativeEvent.layout;
+      moonX.value = x + width / 2;
+      moonY.value = y + height / 2;
     },
-    [offsetX, offsetY, targetX, targetY],
+    [moonX, moonY],
+  );
+
+  const onDateTabLayout = useCallback(
+    (e: LayoutChangeEvent) => {
+      const { x, width } = e.nativeEvent.layout;
+      tabsLeft.value = x + width;
+    },
+    [tabsLeft],
+  );
+
+  const onMenuButtonLayout = useCallback(
+    (e: LayoutChangeEvent) => {
+      tabsRight.value = e.nativeEvent.layout.x;
+    },
+    [tabsRight],
   );
 
   const style = useAnimatedStyle(() => {
     const away = 1 - progress.value;
+    const targetX = anchorX.value >= 0 ? anchorX.value : (tabsLeft.value + tabsRight.value) / 2;
     return {
-      opacity: interpolate(progress.value, [0, 0.2], [0, 1], Extrapolation.CLAMP),
       transform: [
-        { translateX: away * offsetX.value },
-        { translateY: away * offsetY.value },
+        { translateX: away * (targetX - moonX.value) },
+        { translateY: away * (TARGET_Y - moonY.value) },
         { scale: 1 + away * (endScale - 1) },
       ],
     };
   });
 
-  return { onLayout, style };
+  const dialStyle = useAnimatedStyle(() => ({
+    opacity: interpolate(progress.value, MOON_HANDOFF.dialFade, [0, 1], Extrapolation.CLAMP),
+  }));
+
+  return { onLayout, onDateTabLayout, onMenuButtonLayout, style, dialStyle };
 }

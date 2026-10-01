@@ -1,20 +1,17 @@
 import { useCallback } from 'react';
 import { View } from 'react-native';
-import Animated from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
-import { BackHint } from '@/components/ui';
-import { HEADER_TOP, PAGE_BOTTOM } from '@/constants/layout';
+import { PageHeader } from '@/components/ui';
+import { HEADER_TOP, PAGE_BOTTOM, PAGE_PADDING_X } from '@/constants/layout';
 import { useLunarDay } from '@/hooks/useLunarDay';
 import { useScreenTransition } from '@/hooks/useScreenTransition';
 import { useProgress } from '@/lib/data/hooks';
 import type { RootStackParamList } from '@/navigation/navigation.types';
-import { MenuHeader } from './components/MenuHeader';
 import { MenuList } from './components/MenuList/MenuList';
 import type { MenuItem } from './config/menuItems';
-import { useMenuLayers } from './hooks/useMenuLayers';
 import { useMenuSelection } from './hooks/useMenuSelection';
 
 export function MenuPage() {
@@ -23,7 +20,6 @@ export function MenuPage() {
   const { progress, leaving, leave } = useScreenTransition();
   const { now, moon } = useLunarDay();
   const { overall } = useProgress();
-  const layers = useMenuLayers(progress);
 
   const back = useCallback(() => navigation.goBack(), [navigation]);
   const confirm = useCallback(
@@ -41,7 +37,9 @@ export function MenuPage() {
       pointerEvents={leaving ? 'none' : 'auto'}
       style={{ paddingTop: insets.top + HEADER_TOP, paddingBottom: insets.bottom + PAGE_BOTTOM }}
     >
-      <MenuHeader date={now} level={overall.level} moon={moon} titleStyle={layers.title} moonStyle={layers.moon} />
+      <View style={{ paddingHorizontal: PAGE_PADDING_X }}>
+        <PageHeader date={now} title="MENU" moon={moon} level={overall.level} onBack={back} progress={progress} />
+      </View>
       <View className="flex-1 justify-center">
         <MenuList
           progress={progress}
@@ -51,9 +49,6 @@ export function MenuPage() {
           onPress={selection.press}
         />
       </View>
-      <Animated.View style={layers.back}>
-        <BackHint onPress={back} />
-      </Animated.View>
     </View>
   );
 }

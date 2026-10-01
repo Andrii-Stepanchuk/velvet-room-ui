@@ -3,7 +3,7 @@ import { AccessibilityInfo, Pressable, StyleSheet, Text, View, findNodeHandle } 
 import Animated, { type SharedValue } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { SectionLabel } from '@/components/ui';
+import { BackTab, SectionLabel } from '@/components/ui';
 import { PAGE_PADDING_X } from '@/constants/layout';
 import { ARCANA, type Arcana } from '@/lib/game';
 import { textShade } from '@/lib/style';
@@ -11,7 +11,6 @@ import { ARCANA_SHEET } from '../../config/arcanaSheet';
 import { useArcanaSheetStyles } from '../../hooks/useArcanaSheetStyles';
 import { ArcanaCard } from './ArcanaCard';
 import { ArcanaListRow } from './ArcanaListRow';
-import { BackTab } from './BackTab';
 import { SheetSurface } from './SheetSurface';
 
 const TITLE_STYLE = [textShade, { lineHeight: ARCANA_SHEET.titleLineHeight }];
