@@ -45,47 +45,49 @@ export function StatusPage() {
         paddingHorizontal: PAGE_PADDING_X,
       }}
     >
-      <View className="flex-row items-start justify-between">
-        <Animated.View style={layers.dateTab}>
-          <DateTab date={model.now} />
+      <View className="flex-1" importantForAccessibility={arcanaSheet.open ? 'no-hide-descendants' : 'auto'}>
+        <View className="flex-row items-start justify-between">
+          <Animated.View style={layers.dateTab}>
+            <DateTab date={model.now} />
+          </Animated.View>
+          <Animated.View style={layers.menuButton}>
+            <MenuButton onPress={openMenu} />
+          </Animated.View>
+        </View>
+        <Animated.View style={[styles.countdown, layers.countdown]}>
+          <CountdownLockup daysUntilFullMoon={model.daysUntilFullMoon} boosts={model.boosts} />
         </Animated.View>
-        <Animated.View style={layers.menuButton}>
-          <MenuButton onPress={openMenu} />
+
+        <Animated.View onLayout={moonHandoff.onLayout} style={[styles.moon, moonHandoff.style]}>
+          <MoonEmblem
+            moon={model.moon}
+            cycle={model.cycle}
+            size={moonSize}
+            daysUntilFullMoon={model.daysUntilFullMoon}
+            boosts={model.boosts}
+            progress={progress}
+          />
+        </Animated.View>
+
+        <Animated.View style={[styles.identity, layers.identity]}>
+          <IdentityBadge
+            name={model.name}
+            level={model.overall.level}
+            phaseName={model.moon.name}
+            arcana={model.arcana}
+            onArcanaPress={arcanaSheet.show}
+          />
+        </Animated.View>
+        <Animated.View style={[styles.xp, layers.xp]}>
+          <XpBar xp={model.overall.xp} fraction={model.xpFraction} toNext={model.xpToNext} />
+        </Animated.View>
+        <Animated.View style={[styles.stats, layers.stats]}>
+          <StatRow stats={model.stats} />
+        </Animated.View>
+        <Animated.View style={[styles.quests, layers.quests]}>
+          <QuestCard summary={model.questSummary} message={model.questMessage} />
         </Animated.View>
       </View>
-      <Animated.View style={[styles.countdown, layers.countdown]}>
-        <CountdownLockup daysUntilFullMoon={model.daysUntilFullMoon} boosts={model.boosts} />
-      </Animated.View>
-
-      <Animated.View onLayout={moonHandoff.onLayout} style={[styles.moon, moonHandoff.style]}>
-        <MoonEmblem
-          moon={model.moon}
-          cycle={model.cycle}
-          size={moonSize}
-          daysUntilFullMoon={model.daysUntilFullMoon}
-          boosts={model.boosts}
-          progress={progress}
-        />
-      </Animated.View>
-
-      <Animated.View style={[styles.identity, layers.identity]}>
-        <IdentityBadge
-          name={model.name}
-          level={model.overall.level}
-          phaseName={model.moon.name}
-          arcana={model.arcana}
-          onArcanaPress={arcanaSheet.show}
-        />
-      </Animated.View>
-      <Animated.View style={[styles.xp, layers.xp]}>
-        <XpBar xp={model.overall.xp} fraction={model.xpFraction} toNext={model.xpToNext} />
-      </Animated.View>
-      <Animated.View style={[styles.stats, layers.stats]}>
-        <StatRow stats={model.stats} />
-      </Animated.View>
-      <Animated.View style={[styles.quests, layers.quests]}>
-        <QuestCard summary={model.questSummary} message={model.questMessage} />
-      </Animated.View>
 
       {arcanaSheet.open && (
         <ArcanaSheet arcana={model.arcana} progress={arcanaSheet.progress} onClose={arcanaSheet.hide} />

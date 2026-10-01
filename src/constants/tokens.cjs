@@ -54,6 +54,7 @@ const fontSize = {
   xl: 34,
   '2xl': 40,
   '3xl': 64,
+  '4xl': 72,
 };
 
 const tracking = {
