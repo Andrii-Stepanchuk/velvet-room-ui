@@ -1,20 +1,58 @@
 import { memo } from 'react';
-import { Pressable, Text } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 
+import { SkewPanel } from '@/components/ui';
+import { colors } from '@/constants/theme';
 import type { Arcana } from '@/lib/game';
+import { withAlpha } from '@/lib/style';
+import { ARCANA_TAG } from '../../config/statusLayout';
+
+const FILL = withAlpha(colors.background[700], 0.85);
+const FILL_PRESSED = withAlpha(colors.background[400], 0.9);
+const STROKE = withAlpha(colors.accent, 0.3);
+const STROKE_PRESSED = withAlpha(colors.accent, 0.6);
+const SLANT_OFFSET = ARCANA_TAG.height * Math.tan((ARCANA_TAG.slant * Math.PI) / 180);
+const PLATE_STYLE = { height: ARCANA_TAG.height, paddingRight: SLANT_OFFSET + 12 };
+const NUMERAL_STYLE = { height: ARCANA_TAG.height, paddingHorizontal: SLANT_OFFSET + 6 };
+const HIT_SLOP = { top: ARCANA_TAG.hitSlop, bottom: ARCANA_TAG.hitSlop, left: 8, right: 8 };
 
 export const ArcanaLine = memo(function ArcanaLine({ arcana, onPress }: { arcana: Arcana; onPress: () => void }) {
   return (
     <Pressable
       onPress={onPress}
-      hitSlop={10}
+      hitSlop={HIT_SLOP}
       accessibilityRole="button"
-      accessibilityLabel={`Arcana ${arcana.name}. Show details`}
-      className="mt-1.5"
+      accessibilityLabel={`Arcana ${arcana.numeral}, ${arcana.name}`}
+      accessibilityHint="Opens the Arcana card"
+      className="max-w-[86%]"
     >
-      <Text className="font-display-medium text-xs tracking-md text-accent">
-        {arcana.numeral} · {arcana.name.toUpperCase()} ▸
-      </Text>
+      {({ pressed }) => (
+        <SkewPanel
+          slant={ARCANA_TAG.slant}
+          fill={pressed ? FILL_PRESSED : FILL}
+          stroke={pressed ? STROKE_PRESSED : STROKE}
+          className="flex-row items-center"
+          style={PLATE_STYLE}
+        >
+          <SkewPanel slant={ARCANA_TAG.slant} fill={colors.accent} className="justify-center" style={NUMERAL_STYLE}>
+            <Text maxFontSizeMultiplier={ARCANA_TAG.maxFontScale} className="font-display-italic text-sm text-ink">
+              {arcana.numeral}
+            </Text>
+          </SkewPanel>
+          <Text
+            numberOfLines={1}
+            adjustsFontSizeToFit
+            maxFontSizeMultiplier={ARCANA_TAG.maxFontScale}
+            className="ml-3 shrink font-display-italic text-sm tracking-xs text-primary"
+          >
+            {arcana.name.toUpperCase()}
+          </Text>
+          <View className="ml-3.5 h-4 w-px bg-accent/30" />
+          <Text maxFontSizeMultiplier={ARCANA_TAG.maxFontScale} className="ml-2.5 font-display text-md text-accent">
+            ▸
+          </Text>
+        </SkewPanel>
+      )}
     </Pressable>
   );
 });

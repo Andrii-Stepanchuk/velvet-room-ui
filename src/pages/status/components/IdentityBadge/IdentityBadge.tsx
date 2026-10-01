@@ -26,7 +26,7 @@ export const IdentityBadge = memo(function IdentityBadge({
           {`${name.toUpperCase()} · LV ${level}`}
         </Text>
       </SkewPanel>
-      <Text className="mt-3 font-display-medium text-2xs tracking-lg text-secondary">{phaseName.toUpperCase()}</Text>
+      <Text className="mb-2.5 mt-3 font-display-medium text-2xs tracking-lg text-secondary">{phaseName.toUpperCase()}</Text>
       <ArcanaLine arcana={arcana} onPress={onArcanaPress} />
     </View>
   );
