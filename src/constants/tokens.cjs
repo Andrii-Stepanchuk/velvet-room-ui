@@ -29,9 +29,9 @@ const glow = {
 
 const stat = {
   knowledge: '#6fb4ff',
-  guts: '#8f9dff',
+  guts: '#ff9f5c',
   proficiency: '#5fe0d6',
-  kindness: '#7de8ff',
+  kindness: '#ff8fc0',
   charm: '#b39bff',
 };
 

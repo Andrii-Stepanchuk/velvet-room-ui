@@ -205,9 +205,9 @@ Charm is level 2 with 80 of 350 XP. A large 300-XP quest completed during the Da
 | Stat | Level | XP | Max XP | Hue |
 |---|---|---|---|---|
 | Knowledge | 5 | 340 | 500 | `#6FB4FF` |
-| Guts | 3 | 120 | 400 | `#8F9DFF` |
+| Guts | 3 | 120 | 400 | `#FF9F5C` |
 | Proficiency | 4 | 290 | 450 | `#5FE0D6` |
-| Kindness | 6 | 410 | 600 | `#7DE8FF` |
+| Kindness | 6 | 410 | 600 | `#FF8FC0` |
 | Charm | 2 | 80 | 350 | `#B39BFF` |
 
 **Overall Level:** 24, with 720 of 1000 XP.

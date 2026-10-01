@@ -8,4 +8,5 @@ export { SectionLabel } from './SectionLabel';
 export { SkewButton } from './SkewButton';
 export { SkewPanel } from './SkewPanel';
 export { SoftGlow } from './SoftGlow';
+export { StatIcon } from './StatIcon';
 export { UnderwaterBackground } from './UnderwaterBackground/UnderwaterBackground';

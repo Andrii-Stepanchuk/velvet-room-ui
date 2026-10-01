@@ -1,19 +1,24 @@
 import { memo } from 'react';
 import { Text, View } from 'react-native';
 
+import { StatIcon } from '@/components/ui';
 import { colors } from '@/constants/theme';
-import { STAT_DEFS, xpFraction, type StatProgress } from '@/lib/game';
+import { STAT_DEFS, rankName, xpFraction, type StatProgress } from '@/lib/game';
 import { withAlpha } from '@/lib/style';
 import { STAT_ORB } from '../../config/statusLayout';
 import { ProgressRing } from '../ProgressRing';
-import { StatIcon } from './StatIcon';
 
 const INNER = STAT_ORB.size - STAT_ORB.inset;
 
 export const StatOrb = memo(function StatOrb({ stat }: { stat: StatProgress }) {
   const hue = colors.stat[stat.key];
+  const def = STAT_DEFS[stat.key];
   return (
-    <View className="items-center" accessible accessibilityLabel={`${STAT_DEFS[stat.key].name} level ${stat.level}`}>
+    <View
+      className="items-center"
+      accessible
+      accessibilityLabel={`${def.name}, level ${stat.level}, ${rankName(stat.key, stat.level)}, ${stat.xp} of ${stat.maxXp} XP`}
+    >
       <View style={{ width: STAT_ORB.size, height: STAT_ORB.size }} className="items-center justify-center">
         <ProgressRing
           size={STAT_ORB.size}
@@ -27,6 +32,9 @@ export const StatOrb = memo(function StatOrb({ stat }: { stat: StatProgress }) {
         </View>
       </View>
       <Text className="mt-2 font-display text-md text-primary">{stat.level}</Text>
+      <Text className="mt-0.5 font-display-medium text-2xs tracking-sm text-muted">
+        {def.abbr}
+      </Text>
     </View>
   );
 });

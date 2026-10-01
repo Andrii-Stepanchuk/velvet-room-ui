@@ -2,12 +2,11 @@ import { memo } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import Svg, { Circle, Defs, Line, LinearGradient, Path, Polygon, Rect, Stop } from 'react-native-svg';
 
-import { MoonDisc } from '@/components/ui';
+import { MoonDisc, StatIcon } from '@/components/ui';
 import { colors } from '@/constants/theme';
 import type { Arcana } from '@/lib/game';
 import { glowShadow, withAlpha } from '@/lib/style';
 import { ARCANA_CARD } from '../../config/arcanaSheet';
-import { StatIcon } from '../StatRow/StatIcon';
 
 const { width: W, height: H, emblemY: CY, archTop: ARCH_TOP, archRadius: AR, emblemBox: BOX } = ARCANA_CARD;
 const CX = W / 2;
