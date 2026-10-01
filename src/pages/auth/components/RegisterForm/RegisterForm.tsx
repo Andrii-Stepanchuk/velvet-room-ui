@@ -1,10 +1,9 @@
 import { memo } from 'react';
 import { Text, View } from 'react-native';
 
-import { SkewButton } from '@/components/ui';
+import { NameInput, SkewButton } from '@/components/ui';
 import { AccentDivider } from './AccentDivider';
 import { useNameEntry } from '../../hooks/useNameEntry';
-import { NameInput } from './NameInput';
 
 export const RegisterForm = memo(function RegisterForm({ onSubmit }: { onSubmit: (name: string) => void }) {
   const { value, setValue, name, canSubmit, submit } = useNameEntry(onSubmit);

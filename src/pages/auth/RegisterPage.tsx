@@ -15,6 +15,7 @@ import { useEntranceLayerStyles } from './hooks/useEntranceLayerStyles';
 import { useEntranceSequence } from './hooks/useEntranceSequence';
 import { usePlayerRegistration } from './hooks/usePlayerRegistration';
 import { usePreloadedEntrancePlayer } from './hooks/usePreloadedEntrancePlayer';
+import { useReplayEntrance } from './hooks/useReplayEntrance';
 
 export function RegisterPage() {
   const insets = useSafeAreaInsets();
@@ -22,6 +23,7 @@ export function RegisterPage() {
   const { register, enterHome } = usePlayerRegistration();
   const seq = useEntranceSequence(player, { onBegin: register, onComplete: enterHome });
   const { anim, phase } = seq;
+  const replay = useReplayEntrance(seq.begin);
   const atGate = phase === 'gate';
 
   const layer = useEntranceLayerStyles(anim);
@@ -44,20 +46,24 @@ export function RegisterPage() {
 
       <Flash opacity={anim.flashOpacity} />
 
-      <Animated.View pointerEvents="none" style={[styles.top, { top: insets.top + 34 }, layer.form]}>
-        <TitleBlock />
-      </Animated.View>
+      {!replay && (
+        <Animated.View pointerEvents="none" style={[styles.top, { top: insets.top + 34 }, layer.form]}>
+          <TitleBlock />
+        </Animated.View>
+      )}
 
       <Animated.View pointerEvents="none" style={[StyleSheet.absoluteFill, layer.welcome]}>
         <WelcomeBlock name={seq.name} />
       </Animated.View>
 
-      <Animated.View
-        pointerEvents={atGate ? 'auto' : 'none'}
-        style={[styles.bottom, { paddingBottom: insets.bottom + 28 }, layer.form]}
-      >
-        <RegisterForm onSubmit={seq.begin} />
-      </Animated.View>
+      {!replay && (
+        <Animated.View
+          pointerEvents={atGate ? 'auto' : 'none'}
+          style={[styles.bottom, { paddingBottom: insets.bottom + 28 }, layer.form]}
+        >
+          <RegisterForm onSubmit={seq.begin} />
+        </Animated.View>
+      )}
 
       <SkipButton visible={seq.showSkip} onPress={seq.skip} bottom={insets.bottom + 18} />
     </View>

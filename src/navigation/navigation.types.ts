@@ -1,4 +1,6 @@
 export type RootStackParamList = {
-  Register: undefined;
-  Home: undefined;
+  Register: { replay?: boolean } | undefined;
+  Status: undefined;
+  Menu: undefined;
+  Settings: undefined;
 };

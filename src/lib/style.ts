@@ -26,3 +26,7 @@ export const textGlow: TextStyle = {
 };
 
 export const pixelAlignedBorderWidth = PixelRatio.roundToNearestPixel(1);
+
+export function skewX(deg: number): ViewStyle {
+  return { transform: [{ skewX: `${deg}deg` }] };
+}

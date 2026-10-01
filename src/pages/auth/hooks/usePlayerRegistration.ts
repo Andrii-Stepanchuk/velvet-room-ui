@@ -9,7 +9,7 @@ export function usePlayerRegistration() {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList, 'Register'>>();
 
   const { saveName } = usePlayer();
-  const enterHome = useCallback(() => navigation.replace('Home'), [navigation]);
+  const enterHome = useCallback(() => navigation.replace('Status'), [navigation]);
 
   return { register: saveName, enterHome };
 }

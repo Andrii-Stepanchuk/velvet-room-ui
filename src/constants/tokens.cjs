@@ -27,6 +27,14 @@ const glow = {
   500: '#50a0ff',
 };
 
+const stat = {
+  knowledge: '#6fb4ff',
+  guts: '#8f9dff',
+  proficiency: '#5fe0d6',
+  kindness: '#7de8ff',
+  charm: '#b39bff',
+};
+
 const fonts = {
   display: 'ChakraPetch_700Bold',
   displayItalic: 'ChakraPetch_700Bold_Italic',
@@ -62,4 +70,4 @@ const radius = {
   md: 10,
 };
 
-module.exports = { colors, background, glow, fonts, fontSize, tracking, radius };
+module.exports = { colors, background, glow, stat, fonts, fontSize, tracking, radius };

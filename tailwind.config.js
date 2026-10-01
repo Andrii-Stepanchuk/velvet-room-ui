@@ -1,4 +1,4 @@
-const { colors, background, glow, fonts, fontSize, tracking, radius } = require('./src/constants/tokens.cjs');
+const { colors, background, glow, stat, fonts, fontSize, tracking, radius } = require('./src/constants/tokens.cjs');
 
 const px = (scale) => Object.fromEntries(Object.entries(scale).map(([k, v]) => [k, `${v}px`]));
 
@@ -20,6 +20,7 @@ module.exports = {
         disabled: colors.textDisabled,
         background,
         glow,
+        stat,
       },
       fontFamily: {
         display: [fonts.display],

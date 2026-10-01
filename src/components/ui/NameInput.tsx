@@ -4,7 +4,7 @@ import Animated from 'react-native-reanimated';
 
 import { colors, radius } from '@/constants/theme';
 import { glowShadow, withAlpha } from '@/lib/style';
-import { useFocusRing } from '../../hooks/useFocusRing';
+import { useFocusRing } from '@/hooks/useFocusRing';
 
 const FILL = [withAlpha(colors.background[600], 0.8), withAlpha(colors.background[700], 0.7)] as const;
 const UNDERLINE = [withAlpha(colors.accent, 0), withAlpha(colors.accent, 0.85), withAlpha(colors.accent, 0)] as const;

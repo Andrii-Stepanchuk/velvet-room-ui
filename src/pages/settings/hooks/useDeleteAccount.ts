@@ -3,10 +3,12 @@ import { Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
+import { usePlayer } from '@/lib/data/hooks';
 import type { RootStackParamList } from '@/navigation/navigation.types';
 
-export function useDeleteAccount(removePlayer: () => void) {
-  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList, 'Home'>>();
+export function useDeleteAccount(leave: (navigate: () => void) => void) {
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList, 'Settings'>>();
+  const { remove } = usePlayer();
 
   return useCallback(() => {
     Alert.alert('Delete account?', 'Your name and progress will be erased from this device. This cannot be undone.', [
@@ -14,11 +16,12 @@ export function useDeleteAccount(removePlayer: () => void) {
       {
         text: 'Delete',
         style: 'destructive',
-        onPress: () => {
-          removePlayer();
-          navigation.reset({ index: 0, routes: [{ name: 'Register' }] });
-        },
+        onPress: () =>
+          leave(() => {
+            navigation.reset({ index: 0, routes: [{ name: 'Register' }] });
+            remove();
+          }),
       },
     ]);
-  }, [navigation, removePlayer]);
+  }, [leave, navigation, remove]);
 }
