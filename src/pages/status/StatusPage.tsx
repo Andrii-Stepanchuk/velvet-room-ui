@@ -13,6 +13,7 @@ import { ArcanaSheet } from './components/ArcanaSheet/ArcanaSheet';
 import { CountdownLockup } from './components/CountdownLockup';
 import { IdentityBadge } from './components/IdentityBadge/IdentityBadge';
 import { MenuButton } from './components/MenuButton';
+import { MoonCaption } from './components/MoonCaption';
 import { MoonEmblem } from './components/MoonEmblem/MoonEmblem';
 import { QuestCard } from './components/QuestCard';
 import { StatRow } from './components/StatRow/StatRow';
@@ -68,12 +69,14 @@ export function StatusPage() {
             progress={progress}
           />
         </Animated.View>
+        <Animated.View style={[styles.moonCaption, layers.countdown]}>
+          <MoonCaption moon={model.moon} cycle={model.cycle} />
+        </Animated.View>
 
         <Animated.View style={[styles.identity, layers.identity]}>
           <IdentityBadge
             name={model.name}
             level={model.overall.level}
-            phaseName={model.moon.name}
             arcana={model.arcana}
             onArcanaPress={arcanaSheet.show}
           />
@@ -99,6 +102,7 @@ export function StatusPage() {
 const styles = StyleSheet.create({
   countdown: { marginTop: SECTION_GAP.countdown },
   moon: { alignSelf: 'center', marginTop: SECTION_GAP.moonTop },
+  moonCaption: { marginTop: SECTION_GAP.moonCaption },
   identity: { marginTop: SECTION_GAP.identity },
   xp: { marginTop: SECTION_GAP.xp },
   stats: { marginTop: SECTION_GAP.stats },

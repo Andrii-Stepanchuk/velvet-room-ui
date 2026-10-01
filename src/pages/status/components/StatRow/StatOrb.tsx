@@ -31,8 +31,13 @@ export const StatOrb = memo(function StatOrb({ stat }: { stat: StatProgress }) {
           <StatIcon stat={stat.key} size={STAT_ORB.icon} color={hue} />
         </View>
       </View>
-      <Text className="mt-2 font-display text-md text-primary">{stat.level}</Text>
-      <Text className="mt-0.5 font-display-medium text-2xs tracking-sm text-muted">
+      <Text maxFontSizeMultiplier={STAT_ORB.maxFontScale} className="mt-2 font-display text-md text-primary">
+        {stat.level}
+      </Text>
+      <Text
+        maxFontSizeMultiplier={STAT_ORB.maxFontScale}
+        className="mt-0.5 font-display-medium text-2xs tracking-sm text-muted"
+      >
         {def.abbr}
       </Text>
     </View>

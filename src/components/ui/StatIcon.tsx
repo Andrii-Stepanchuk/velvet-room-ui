@@ -1,5 +1,10 @@
 import { memo } from 'react';
-import { BookOpenText, Hammer, HandFist, HandHeart, Sparkles, type LucideIcon } from 'lucide-react-native';
+import type { LucideIcon } from 'lucide-react-native';
+import BookOpenText from 'lucide-react-native/icons/book-open-text';
+import Hammer from 'lucide-react-native/icons/hammer';
+import HandFist from 'lucide-react-native/icons/hand-fist';
+import HandHeart from 'lucide-react-native/icons/hand-heart';
+import Sparkles from 'lucide-react-native/icons/sparkles';
 
 import type { StatKey } from '@/lib/game';
 

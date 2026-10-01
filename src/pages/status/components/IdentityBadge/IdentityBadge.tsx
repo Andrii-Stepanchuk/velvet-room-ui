@@ -9,13 +9,11 @@ import { ArcanaLine } from './ArcanaLine';
 export const IdentityBadge = memo(function IdentityBadge({
   name,
   level,
-  phaseName,
   arcana,
   onArcanaPress,
 }: {
   name: string;
   level: number;
-  phaseName: string;
   arcana: Arcana;
   onArcanaPress: () => void;
 }) {
@@ -26,8 +24,9 @@ export const IdentityBadge = memo(function IdentityBadge({
           {`${name.toUpperCase()} · LV ${level}`}
         </Text>
       </SkewPanel>
-      <Text className="mb-2.5 mt-3 font-display-medium text-2xs tracking-lg text-secondary">{phaseName.toUpperCase()}</Text>
-      <ArcanaLine arcana={arcana} onPress={onArcanaPress} />
+      <View className="mt-3 w-full items-center">
+        <ArcanaLine arcana={arcana} onPress={onArcanaPress} />
+      </View>
     </View>
   );
 });
