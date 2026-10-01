@@ -20,14 +20,22 @@ export function formatMultiplier(multiplier: number): string {
   return `×${multiplier.toFixed(1)}`;
 }
 
-export function headerCopy(daysUntilFullMoon: number, boosts: Boosts): { title: string; subtitle: string } {
-  const xp = `XP ${formatMultiplier(boosts.multiplier)}`;
-  if (boosts.fullMoon && boosts.darkHour) return { title: 'FULL\nMOON', subtitle: `DARK HOUR · ${xp}` };
-  if (boosts.fullMoon) return { title: 'FULL\nMOON', subtitle: `${xp} ALL DAY` };
-  if (boosts.darkHour) {
-    return { title: 'DARK\nHOUR', subtitle: `${xp} UNTIL ${formatHour(CONFIG.boosts.darkHour.endHour)}` };
-  }
-  if (daysUntilFullMoon === 0) return { title: 'FULL\nMOON', subtitle: 'THE TIME HAS COME' };
-  const unit = daysUntilFullMoon === 1 ? 'DAY' : 'DAYS';
-  return { title: `${daysUntilFullMoon} ${unit}`, subtitle: 'UNTIL THE FULL MOON' };
+export interface CountdownCopy {
+  value: string;
+  unit: string;
+  caption: string;
+  label: string;
+}
+
+function copy(value: string, unit: string, caption: string): CountdownCopy {
+  return { value, unit, caption, label: `${value} ${unit}, ${caption}` };
+}
+
+export function countdownCopy(daysUntilFullMoon: number, boosts: Boosts): CountdownCopy {
+  const multiplier = formatMultiplier(boosts.multiplier);
+  const until = formatHour(CONFIG.boosts.darkHour.endHour);
+  if (boosts.fullMoon && boosts.darkHour) return copy(multiplier, 'FULL MOON', `DARK HOUR · TO ${until}`);
+  if (boosts.fullMoon) return copy(multiplier, 'FULL MOON', 'XP ALL DAY');
+  if (boosts.darkHour) return copy(multiplier, 'DARK HOUR', `XP UNTIL ${until}`);
+  return copy(String(daysUntilFullMoon), daysUntilFullMoon === 1 ? 'DAY' : 'DAYS', 'UNTIL THE FULL MOON');
 }

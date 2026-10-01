@@ -21,14 +21,17 @@ export const MenuHeader = memo(function MenuHeader({
   moonStyle: LayerStyle;
 }) {
   return (
-    <View className="flex-row items-start justify-between" style={{ paddingHorizontal: PAGE_PADDING_X }}>
-      <Animated.View style={titleStyle}>
-        <PageHeader date={date} title="MENU" />
-      </Animated.View>
-      <Animated.View style={[{ alignItems: 'center' }, moonStyle]}>
-        <MoonDisc size={MENU_MOON_SIZE} illumination={moon.illumination} waxing={moon.waxing} />
-        <Text className="mt-1.5 font-display-italic text-lg text-white">LV {level}</Text>
-      </Animated.View>
-    </View>
+    <Animated.View style={[{ paddingHorizontal: PAGE_PADDING_X }, titleStyle]}>
+      <PageHeader
+        date={date}
+        title="MENU"
+        aside={
+          <Animated.View style={[{ alignItems: 'center' }, moonStyle]}>
+            <MoonDisc size={MENU_MOON_SIZE} illumination={moon.illumination} waxing={moon.waxing} />
+            <Text className="mt-1.5 font-display-italic text-lg text-white">LV {level}</Text>
+          </Animated.View>
+        }
+      />
+    </Animated.View>
   );
 });

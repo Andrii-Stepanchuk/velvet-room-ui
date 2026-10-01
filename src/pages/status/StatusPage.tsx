@@ -5,11 +5,12 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
-import { HEADER_TOP, PAGE_PADDING_X } from '@/constants/layout';
+import { DateTab } from '@/components/ui';
+import { HEADER_TOP, PAGE_BOTTOM, PAGE_PADDING_X } from '@/constants/layout';
 import { useScreenTransition } from '@/hooks/useScreenTransition';
 import type { RootStackParamList } from '@/navigation/navigation.types';
 import { ArcanaSheet } from './components/ArcanaSheet/ArcanaSheet';
-import { DateHeader } from './components/DateHeader/DateHeader';
+import { CountdownLockup } from './components/CountdownLockup';
 import { IdentityBadge } from './components/IdentityBadge/IdentityBadge';
 import { MenuButton } from './components/MenuButton';
 import { MoonEmblem } from './components/MoonEmblem';
@@ -22,15 +23,6 @@ import { useMoonHandoff } from './hooks/useMoonHandoff';
 import { useMoonSize } from './hooks/useMoonSize';
 import { useStatusLayers } from './hooks/useStatusLayers';
 import { useStatusModel } from './hooks/useStatusModel';
-
-const styles = StyleSheet.create({
-  moon: { alignSelf: 'center', marginTop: SECTION_GAP.moonTop },
-  identity: { marginTop: SECTION_GAP.identity },
-  xp: { marginTop: SECTION_GAP.xp },
-  stats: { marginTop: SECTION_GAP.stats },
-  quests: { marginTop: SECTION_GAP.quests },
-});
-
 
 export function StatusPage() {
   const insets = useSafeAreaInsets();
@@ -47,16 +39,23 @@ export function StatusPage() {
     <View
       className="flex-1"
       pointerEvents={leaving ? 'none' : 'auto'}
-      style={{ paddingTop: insets.top + HEADER_TOP, paddingBottom: insets.bottom + 16, paddingHorizontal: PAGE_PADDING_X }}
+      style={{
+        paddingTop: insets.top + HEADER_TOP,
+        paddingBottom: insets.bottom + PAGE_BOTTOM,
+        paddingHorizontal: PAGE_PADDING_X,
+      }}
     >
       <View className="flex-row items-start justify-between">
-        <Animated.View style={layers.header}>
-          <DateHeader date={model.now} daysUntilFullMoon={model.daysUntilFullMoon} boosts={model.boosts} />
+        <Animated.View style={layers.dateTab}>
+          <DateTab date={model.now} />
         </Animated.View>
         <Animated.View style={layers.menuButton}>
           <MenuButton onPress={openMenu} />
         </Animated.View>
       </View>
+      <Animated.View style={[styles.countdown, layers.countdown]}>
+        <CountdownLockup daysUntilFullMoon={model.daysUntilFullMoon} boosts={model.boosts} />
+      </Animated.View>
 
       <Animated.View onLayout={moonHandoff.onLayout} style={[styles.moon, moonHandoff.style]}>
         <MoonEmblem moon={model.moon} size={moonSize} />
@@ -87,3 +86,12 @@ export function StatusPage() {
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  countdown: { marginTop: SECTION_GAP.countdown },
+  moon: { alignSelf: 'center', marginTop: SECTION_GAP.moonTop },
+  identity: { marginTop: SECTION_GAP.identity },
+  xp: { marginTop: SECTION_GAP.xp },
+  stats: { marginTop: SECTION_GAP.stats },
+  quests: { marginTop: SECTION_GAP.quests },
+});

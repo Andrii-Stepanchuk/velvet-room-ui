@@ -6,7 +6,7 @@ import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 import { BackHint, PageHeader } from '@/components/ui';
-import { HEADER_TOP, PAGE_PADDING_X } from '@/constants/layout';
+import { HEADER_TOP, PAGE_BOTTOM, PAGE_PADDING_X } from '@/constants/layout';
 import { useLunarDay } from '@/hooks/useLunarDay';
 import { useScreenTransition } from '@/hooks/useScreenTransition';
 import type { RootStackParamList } from '@/navigation/navigation.types';
@@ -35,7 +35,7 @@ export function SettingsPage() {
     <View
       className="flex-1"
       pointerEvents={leaving ? 'none' : 'auto'}
-      style={{ paddingTop: insets.top + HEADER_TOP, paddingBottom: insets.bottom + 16 }}
+      style={{ paddingTop: insets.top + HEADER_TOP, paddingBottom: insets.bottom + PAGE_BOTTOM }}
     >
       <Animated.View style={[styles.padded, layers.header]}>
         <PageHeader date={now} title="SETTINGS" />

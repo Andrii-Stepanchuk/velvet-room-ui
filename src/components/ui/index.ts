@@ -1,4 +1,6 @@
 export { BackHint } from './BackHint';
+export { DateTab } from './DateTab';
+export { EdgeTab } from './EdgeTab';
 export { MoonDisc } from './MoonDisc';
 export { NameInput } from './NameInput';
 export { PageHeader } from './PageHeader';

@@ -6,7 +6,7 @@ import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 import { BackHint } from '@/components/ui';
-import { HEADER_TOP } from '@/constants/layout';
+import { HEADER_TOP, PAGE_BOTTOM } from '@/constants/layout';
 import { useLunarDay } from '@/hooks/useLunarDay';
 import { useScreenTransition } from '@/hooks/useScreenTransition';
 import { useProgress } from '@/lib/data/hooks';
@@ -39,7 +39,7 @@ export function MenuPage() {
     <View
       className="flex-1"
       pointerEvents={leaving ? 'none' : 'auto'}
-      style={{ paddingTop: insets.top + HEADER_TOP, paddingBottom: insets.bottom + 16 }}
+      style={{ paddingTop: insets.top + HEADER_TOP, paddingBottom: insets.bottom + PAGE_BOTTOM }}
     >
       <MenuHeader date={now} level={overall.level} moon={moon} titleStyle={layers.title} moonStyle={layers.moon} />
       <View className="flex-1 justify-center">
