@@ -14,6 +14,7 @@ export const MOON_PHASES = [
 export type MoonPhaseName = (typeof MOON_PHASES)[number];
 
 export const FULL_MOON_INDEX = 4;
+export const FULL_MOON_HALF_WINDOW = 1 / 16;
 
 export interface MoonState {
   index: number;
@@ -61,9 +62,4 @@ export function daysUntilFullMoon(date: Date): number {
 
 export function nextFullMoonDate(date: Date): Date {
   return new Date(date.getFullYear(), date.getMonth(), date.getDate() + daysUntilFullMoon(date));
-}
-
-export function fullMoonProgress(moon: MoonState): number {
-  if (moon.index === FULL_MOON_INDEX) return 1;
-  return (moon.cycleProgress + 0.5) % 1;
 }

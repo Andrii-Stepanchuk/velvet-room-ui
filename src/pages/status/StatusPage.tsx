@@ -13,7 +13,7 @@ import { ArcanaSheet } from './components/ArcanaSheet/ArcanaSheet';
 import { CountdownLockup } from './components/CountdownLockup';
 import { IdentityBadge } from './components/IdentityBadge/IdentityBadge';
 import { MenuButton } from './components/MenuButton';
-import { MoonEmblem } from './components/MoonEmblem';
+import { MoonEmblem } from './components/MoonEmblem/MoonEmblem';
 import { QuestCard } from './components/QuestCard';
 import { StatRow } from './components/StatRow/StatRow';
 import { XpBar } from './components/XpBar';
@@ -58,7 +58,7 @@ export function StatusPage() {
       </Animated.View>
 
       <Animated.View onLayout={moonHandoff.onLayout} style={[styles.moon, moonHandoff.style]}>
-        <MoonEmblem moon={model.moon} size={moonSize} />
+        <MoonEmblem moon={model.moon} size={moonSize} daysUntilFullMoon={model.daysUntilFullMoon} />
       </Animated.View>
 
       <Animated.View style={[styles.identity, layers.identity]}>

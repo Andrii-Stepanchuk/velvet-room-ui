@@ -39,3 +39,8 @@ export function countdownCopy(daysUntilFullMoon: number, boosts: Boosts): Countd
   if (boosts.darkHour) return copy(multiplier, 'DARK HOUR', `XP UNTIL ${until}`);
   return copy(String(daysUntilFullMoon), daysUntilFullMoon === 1 ? 'DAY' : 'DAYS', 'UNTIL THE FULL MOON');
 }
+
+export function moonDialLabel(phaseName: string, daysUntilFullMoon: number): string {
+  if (daysUntilFullMoon === 0) return `${phaseName}, Full Moon today`;
+  return `${phaseName}, ${daysUntilFullMoon} ${daysUntilFullMoon === 1 ? 'day' : 'days'} until the Full Moon`;
+}
