@@ -22,7 +22,7 @@ export const PageHeader = memo(function PageHeader({
   progress,
 }: {
   date: Date;
-  title: string;
+  title?: string;
   moon: MoonState;
   level: number;
   onBack: () => void;
@@ -50,11 +50,17 @@ export const PageHeader = memo(function PageHeader({
           <BackTab onPress={onBack} />
         </Animated.View>
       </View>
-      <Animated.View style={layers.title}>
-        <Text accessibilityRole="header" className="mt-7 self-start font-display-italic text-2xl text-white" style={TITLE_STYLE}>
-          {title}
-        </Text>
-      </Animated.View>
+      {title !== undefined && (
+        <Animated.View style={layers.title}>
+          <Text
+            accessibilityRole="header"
+            className="mt-7 self-start font-display-italic text-2xl text-white"
+            style={TITLE_STYLE}
+          >
+            {title}
+          </Text>
+        </Animated.View>
+      )}
     </View>
   );
 });

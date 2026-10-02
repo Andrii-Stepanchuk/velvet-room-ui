@@ -8,6 +8,7 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { DateTab } from '@/components/ui';
 import { HEADER_TOP, PAGE_BOTTOM, PAGE_PADDING_X } from '@/constants/layout';
 import { useScreenTransition } from '@/hooks/useScreenTransition';
+import type { StatKey } from '@/lib/game';
 import type { RootStackParamList } from '@/navigation/navigation.types';
 import { ArcanaSheet } from './components/ArcanaSheet/ArcanaSheet';
 import { CountdownLockup } from './components/CountdownLockup';
@@ -35,6 +36,10 @@ export function StatusPage() {
   const layers = useStatusLayers(progress);
   const arcanaSheet = useArcanaSheet();
   const openMenu = useCallback(() => leave(() => navigation.navigate('Menu')), [leave, navigation]);
+  const openStat = useCallback(
+    (stat: StatKey) => leave(() => navigation.navigate('StatDetail', { stat })),
+    [leave, navigation],
+  );
 
   return (
     <View
@@ -86,7 +91,7 @@ export function StatusPage() {
           <XpBar xp={model.overall.xp} fraction={model.xpFraction} toNext={model.xpToNext} />
         </Animated.View>
         <Animated.View style={[styles.stats, layers.stats]}>
-          <StatRow stats={model.stats} />
+          <StatRow stats={model.stats} onOpen={openStat} />
         </Animated.View>
         <Animated.View style={[styles.quests, layers.quests]}>
           <QuestCard summary={model.questSummary} message={model.questMessage} />

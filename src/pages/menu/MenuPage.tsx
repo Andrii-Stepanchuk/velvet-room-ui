@@ -25,6 +25,7 @@ export function MenuPage() {
   const confirm = useCallback(
     (item: MenuItem) => {
       if (item.target === 'Status') navigation.goBack();
+      if (item.target === 'Stats') leave(() => navigation.navigate('Stats'));
       if (item.target === 'Settings') leave(() => navigation.navigate('Settings'));
     },
     [leave, navigation],

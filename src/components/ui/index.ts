@@ -4,6 +4,7 @@ export { EdgeTab } from './EdgeTab';
 export { MoonDisc } from './MoonDisc';
 export { NameInput } from './NameInput';
 export { PageHeader } from './PageHeader/PageHeader';
+export { ProgressRing } from './ProgressRing';
 export { SectionLabel } from './SectionLabel';
 export { SkewButton } from './SkewButton';
 export { SkewPanel } from './SkewPanel';

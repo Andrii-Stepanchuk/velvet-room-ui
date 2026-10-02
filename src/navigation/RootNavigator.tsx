@@ -5,6 +5,8 @@ import { usePlayer } from '@/lib/data/hooks';
 import { RegisterPage } from '@/pages/auth/RegisterPage';
 import { MenuPage } from '@/pages/menu/MenuPage';
 import { SettingsPage } from '@/pages/settings/SettingsPage';
+import { StatDetailPage } from '@/pages/statDetail/StatDetailPage';
+import { StatsPage } from '@/pages/stats/StatsPage';
 import { StatusPage } from '@/pages/status/StatusPage';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -27,6 +29,8 @@ export function RootNavigator() {
         <Stack.Screen name="Status" component={StatusPage} options={{ animation: 'fade' }} />
         <Stack.Screen name="Menu" component={MenuPage} options={IN_SCENE} />
         <Stack.Screen name="Settings" component={SettingsPage} options={IN_SCENE} />
+        <Stack.Screen name="Stats" component={StatsPage} options={IN_SCENE} />
+        <Stack.Screen name="StatDetail" component={StatDetailPage} options={IN_SCENE} />
       </Stack.Navigator>
     </NavigationContainer>
   );
