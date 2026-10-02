@@ -1,10 +1,10 @@
 import { memo } from 'react';
 import { Pressable, Text } from 'react-native';
 
-import { SkewPanel } from '@/components/ui';
+import { ACTION_PLATE } from '@/constants/layout';
 import { colors } from '@/constants/theme';
 import { slantOffset, withAlpha } from '@/lib/style';
-import { ACTION_PLATE } from '../config/settingsLayout';
+import { SkewPanel } from './SkewPanel';
 
 const FILL = withAlpha(colors.background[700], 0.4);
 const FILL_PRESSED = withAlpha(colors.background[400], 0.9);
@@ -20,20 +20,24 @@ export const ActionPlate = memo(function ActionPlate({
   onPress,
   danger = false,
   chevron = false,
+  disabled = false,
   accessibilityHint,
 }: {
   label: string;
   onPress: () => void;
   danger?: boolean;
   chevron?: boolean;
+  disabled?: boolean;
   accessibilityHint?: string;
 }) {
   return (
     <Pressable
       onPress={onPress}
+      disabled={disabled}
       accessibilityRole="button"
       accessibilityLabel={label}
       accessibilityHint={accessibilityHint}
+      accessibilityState={{ disabled }}
       className="self-start"
     >
       {({ pressed }) => (
@@ -46,7 +50,7 @@ export const ActionPlate = memo(function ActionPlate({
         >
           <Text
             maxFontSizeMultiplier={ACTION_PLATE.maxFontScale}
-            className={`font-display text-sm tracking-md ${danger ? 'text-danger' : 'text-primary'}`}
+            className={`font-display text-sm tracking-md ${disabled ? 'text-disabled' : danger ? 'text-danger' : 'text-primary'}`}
           >
             {label}
           </Text>

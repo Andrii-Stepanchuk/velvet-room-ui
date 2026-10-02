@@ -6,5 +6,6 @@ export type RootStackParamList = {
   Menu: undefined;
   Settings: undefined;
   Stats: undefined;
+  Tasks: undefined;
   StatDetail: { stat: StatKey };
 };

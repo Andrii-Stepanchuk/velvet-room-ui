@@ -1,9 +1,8 @@
 import { memo } from 'react';
 import { Text, View } from 'react-native';
 
-import { SectionLabel } from '@/components/ui';
+import { ActionPlate, SectionLabel } from '@/components/ui';
 import { textShade } from '@/lib/style';
-import { ActionPlate } from './ActionPlate';
 
 export const EntranceSection = memo(function EntranceSection({ onReplay }: { onReplay: () => void }) {
   return (

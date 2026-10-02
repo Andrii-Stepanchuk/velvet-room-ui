@@ -26,7 +26,7 @@ export const BlessingPlate = memo(function BlessingPlate({ arcana }: { arcana: A
           {arcanaFormula(arcana)}
         </Text>
       </View>
-      <Text className="font-display-medium text-2xs tracking-lg text-muted">BLESSING · DORMANT</Text>
+      <Text className="font-display-medium text-2xs tracking-lg text-muted">BLESSING · ACTIVE</Text>
       <Text className="mt-1.5 font-body text-md leading-6 text-primary">{arcana.blessing}</Text>
     </SkewPanel>
   );

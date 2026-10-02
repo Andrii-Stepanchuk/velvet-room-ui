@@ -6,7 +6,14 @@
       "idx": 0,
       "version": "6",
       "when": 1790802323020,
-      "tag": "0000_odd_patch",
+      "tag": "0000_create_player",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1790943473869,
+      "tag": "0001_quests_xp_award_day_log",
       "breakpoints": true
     }
   ]

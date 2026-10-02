@@ -1,17 +1,7 @@
-import type { StatKey } from './stats';
-
 export interface OverallProgress {
   level: number;
   xp: number;
   maxXp: number;
-}
-
-export interface Quest {
-  id: string;
-  title: string;
-  stat: StatKey;
-  baseXp: number;
-  done: boolean;
 }
 
 export interface QuestSummary {
@@ -29,7 +19,7 @@ export function xpFraction({ xp, maxXp }: { xp: number; maxXp: number }): number
   return Math.min(Math.max(xp / maxXp, 0), 1);
 }
 
-export function summarizeQuests(quests: readonly Quest[]): QuestSummary {
+export function summarizeQuests(quests: readonly { done: boolean }[]): QuestSummary {
   const done = quests.filter((q) => q.done).length;
   return { done, total: quests.length, remaining: quests.length - done };
 }

@@ -1,7 +1,7 @@
 import { memo } from 'react';
 import { Pressable, Text, View } from 'react-native';
 
-import { SectionLabel, SkewPanel } from '@/components/ui';
+import { ActionPlate, SectionLabel, SkewPanel } from '@/components/ui';
 import { colors } from '@/constants/theme';
 import type { BoostOverrideKey } from '@/lib/state/boostOverrides';
 import { textShade, withAlpha } from '@/lib/style';
@@ -14,9 +14,11 @@ const OFF_STROKE = withAlpha(colors.accent, 0.3);
 export const TestingSection = memo(function TestingSection({
   rows,
   onToggle,
+  onSeedQuests,
 }: {
   rows: readonly TestingRow[];
   onToggle: (key: BoostOverrideKey) => void;
+  onSeedQuests: () => void;
 }) {
   return (
     <View>
@@ -45,6 +47,9 @@ export const TestingSection = memo(function TestingSection({
           </SkewPanel>
         </Pressable>
       ))}
+      <View className="mt-4">
+        <ActionPlate label="SEED DEMO QUESTS" chevron onPress={onSeedQuests} accessibilityHint="Adds six daily demo quests" />
+      </View>
     </View>
   );
 });

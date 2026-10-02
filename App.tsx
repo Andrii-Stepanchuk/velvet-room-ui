@@ -14,6 +14,7 @@ import {
   Barlow_500Medium,
   Barlow_700Bold,
 } from '@expo-google-fonts/barlow';
+import { ProgressProvider } from '@/lib/data/hooks';
 import { useDatabaseReady } from '@/lib/db/useDatabaseReady';
 import { UnderwaterBackground } from '@/components/ui';
 import { colors } from '@/constants/theme';
@@ -39,11 +40,13 @@ export default function App() {
 
   return (
     <GestureHandlerRootView style={{ flex: 1, backgroundColor: colors.background[800] }}>
-      <UnderwaterBackground />
-      <SafeAreaProvider>
-        <StatusBar style="light" />
-        <RootNavigator />
-      </SafeAreaProvider>
+      <ProgressProvider>
+        <UnderwaterBackground />
+        <SafeAreaProvider>
+          <StatusBar style="light" />
+          <RootNavigator />
+        </SafeAreaProvider>
+      </ProgressProvider>
     </GestureHandlerRootView>
   );
 }

@@ -1,14 +1,10 @@
-import { deriveArcana } from '@/lib/game';
-import { SEED_OVERALL, SEED_QUESTS, SEED_STATS, SEED_STREAK } from '../seed';
+import { useContext } from 'react';
 
-const SEED_PROGRESS = {
-  stats: SEED_STATS,
-  overall: SEED_OVERALL,
-  quests: SEED_QUESTS,
-  streak: SEED_STREAK,
-  arcana: deriveArcana(SEED_STATS),
-};
+import { ProgressContext } from '../progress/ProgressProvider';
+import type { Progress } from '../progress/buildProgress';
 
-export function useProgress() {
-  return SEED_PROGRESS;
+export function useProgress(): Progress {
+  const progress = useContext(ProgressContext);
+  if (!progress) throw new Error('useProgress needs a ProgressProvider');
+  return progress;
 }

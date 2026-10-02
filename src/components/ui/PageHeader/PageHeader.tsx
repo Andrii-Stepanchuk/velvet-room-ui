@@ -1,4 +1,4 @@
-import { memo, useCallback } from 'react';
+import { memo, useCallback, type ReactNode } from 'react';
 import { StyleSheet, Text, View, type LayoutChangeEvent } from 'react-native';
 import Animated, { type SharedValue } from 'react-native-reanimated';
 
@@ -20,6 +20,7 @@ export const PageHeader = memo(function PageHeader({
   level,
   onBack,
   progress,
+  aside,
 }: {
   date: Date;
   title?: string;
@@ -27,6 +28,7 @@ export const PageHeader = memo(function PageHeader({
   level: number;
   onBack: () => void;
   progress: SharedValue<number>;
+  aside?: ReactNode;
 }) {
   const layers = usePageHeaderLayers(progress);
   const setMoonCenterX = useHeaderMoon((state) => state.setCenterX);
@@ -51,14 +53,11 @@ export const PageHeader = memo(function PageHeader({
         </Animated.View>
       </View>
       {title !== undefined && (
-        <Animated.View style={layers.title}>
-          <Text
-            accessibilityRole="header"
-            className="mt-7 self-start font-display-italic text-2xl text-white"
-            style={TITLE_STYLE}
-          >
+        <Animated.View style={layers.title} className="mt-7 flex-row items-end justify-between">
+          <Text accessibilityRole="header" className="font-display-italic text-2xl text-white" style={TITLE_STYLE}>
             {title}
           </Text>
+          {aside}
         </Animated.View>
       )}
     </View>

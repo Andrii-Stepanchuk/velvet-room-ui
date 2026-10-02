@@ -8,6 +8,7 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { DateTab } from '@/components/ui';
 import { HEADER_TOP, PAGE_BOTTOM, PAGE_PADDING_X } from '@/constants/layout';
 import { useScreenTransition } from '@/hooks/useScreenTransition';
+import { useSheet } from '@/hooks/useSheet';
 import type { StatKey } from '@/lib/game';
 import type { RootStackParamList } from '@/navigation/navigation.types';
 import { ArcanaSheet } from './components/ArcanaSheet/ArcanaSheet';
@@ -19,8 +20,8 @@ import { MoonEmblem } from './components/MoonEmblem/MoonEmblem';
 import { QuestCard } from './components/QuestCard';
 import { StatRow } from './components/StatRow/StatRow';
 import { XpBar } from './components/XpBar';
+import { ARCANA_SHEET } from './config/arcanaSheet';
 import { SECTION_GAP } from './config/statusLayout';
-import { useArcanaSheet } from './hooks/useArcanaSheet';
 import { useMoonHandoff } from './hooks/useMoonHandoff';
 import { useMoonSize } from './hooks/useMoonSize';
 import { useStatusLayers } from './hooks/useStatusLayers';
@@ -34,8 +35,9 @@ export function StatusPage() {
   const moonSize = useMoonSize();
   const moonHandoff = useMoonHandoff(progress, moonSize);
   const layers = useStatusLayers(progress);
-  const arcanaSheet = useArcanaSheet();
+  const arcanaSheet = useSheet(ARCANA_SHEET);
   const openMenu = useCallback(() => leave(() => navigation.navigate('Menu')), [leave, navigation]);
+  const openTasks = useCallback(() => leave(() => navigation.navigate('Tasks')), [leave, navigation]);
   const openStat = useCallback(
     (stat: StatKey) => leave(() => navigation.navigate('StatDetail', { stat })),
     [leave, navigation],
@@ -94,7 +96,7 @@ export function StatusPage() {
           <StatRow stats={model.stats} onOpen={openStat} />
         </Animated.View>
         <Animated.View style={[styles.quests, layers.quests]}>
-          <QuestCard summary={model.questSummary} message={model.questMessage} />
+          <QuestCard summary={model.questSummary} message={model.questMessage} onPress={openTasks} />
         </Animated.View>
       </View>
 

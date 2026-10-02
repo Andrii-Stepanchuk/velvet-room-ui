@@ -1,36 +1,46 @@
 import { useCallback, useState } from 'react';
 import { BackHandler } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
-import { useReducedMotion, useSharedValue, withTiming } from 'react-native-reanimated';
+import { useReducedMotion, useSharedValue, withTiming, type EasingFunction } from 'react-native-reanimated';
 import { scheduleOnRN } from 'react-native-worklets';
 
-import { ARCANA_SHEET } from '../config/arcanaSheet';
+export interface SheetTiming {
+  inMs: number;
+  outMs: number;
+  reducedMs: number;
+  easingIn: EasingFunction;
+  easingOut: EasingFunction;
+}
 
-export function useArcanaSheet() {
+export function useSheet(timing: SheetTiming, onHidden?: () => void) {
   const [open, setOpen] = useState(false);
   const progress = useSharedValue(0);
   const reducedMotion = useReducedMotion();
+  const close = useCallback(() => {
+    setOpen(false);
+    onHidden?.();
+  }, [onHidden]);
 
   const show = useCallback(() => {
     setOpen(true);
     progress.value = withTiming(1, {
-      duration: reducedMotion ? ARCANA_SHEET.reducedMs : ARCANA_SHEET.inMs,
-      easing: ARCANA_SHEET.easingIn,
+      duration: reducedMotion ? timing.reducedMs : timing.inMs,
+      easing: timing.easingIn,
     });
-  }, [progress, reducedMotion]);
+  }, [progress, reducedMotion, timing]);
 
   const hide = useCallback(() => {
     progress.value = withTiming(
       0,
       {
-        duration: reducedMotion ? ARCANA_SHEET.reducedMs : ARCANA_SHEET.outMs,
-        easing: ARCANA_SHEET.easingOut,
+        duration: reducedMotion ? timing.reducedMs : timing.outMs,
+        easing: timing.easingOut,
       },
       (finished) => {
-        if (finished) scheduleOnRN(setOpen, false);
+        if (finished) scheduleOnRN(close);
       },
     );
-  }, [progress, reducedMotion]);
+  }, [progress, reducedMotion, timing, close]);
 
   useFocusEffect(
     useCallback(() => {

@@ -6,6 +6,7 @@ import { useLayoutSize } from '@/hooks/useLayoutSize';
 import { slantOffset } from '@/lib/style';
 
 const SHADOW_OFFSETS = [3, 2, 1] as const;
+const DASH = [6, 5];
 const SHADOW_SVG_STYLE: ViewStyle = { position: 'absolute', top: 0, left: 0, right: 0, bottom: -SHADOW_OFFSETS[0], overflow: 'visible' };
 
 export const SkewPanel = memo(function SkewPanel({
@@ -13,6 +14,8 @@ export const SkewPanel = memo(function SkewPanel({
   fill,
   stroke,
   shadow,
+  dashed = false,
+  tint,
   className,
   style,
   children,
@@ -21,6 +24,8 @@ export const SkewPanel = memo(function SkewPanel({
   fill: string;
   stroke?: string;
   shadow?: string;
+  dashed?: boolean;
+  tint?: string;
   className?: string;
   style?: StyleProp<ViewStyle>;
   children?: ReactNode;
@@ -45,7 +50,14 @@ export const SkewPanel = memo(function SkewPanel({
             SHADOW_OFFSETS.map((dy) => (
               <Polygon key={dy} points={points} fill={shadow} fillOpacity={0.3} transform={`translate(0 ${dy})`} />
             ))}
-          <Polygon points={points} fill={fill} stroke={stroke} strokeWidth={stroke ? 1 : 0} />
+          {tint && <Polygon points={points} fill={fill} />}
+          <Polygon
+            points={points}
+            fill={tint ?? fill}
+            stroke={stroke}
+            strokeWidth={stroke ? 1 : 0}
+            strokeDasharray={dashed ? DASH : undefined}
+          />
         </Svg>
       )}
       {children}

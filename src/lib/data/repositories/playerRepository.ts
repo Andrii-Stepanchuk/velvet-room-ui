@@ -1,7 +1,7 @@
 import { eq } from 'drizzle-orm';
 
 import { getDb } from '@/lib/db/client';
-import { PLAYER_ID, player, type Player } from '@/lib/db/schema';
+import { PLAYER_ID, xpAward, dayLog, player, quest, type Player } from '@/lib/db/schema';
 
 export const playerRepository = {
   query() {
@@ -22,6 +22,11 @@ export const playerRepository = {
   },
 
   delete(): void {
-    getDb().delete(player).where(eq(player.id, PLAYER_ID)).run();
+    getDb().transaction((tx) => {
+      tx.delete(xpAward).run();
+      tx.delete(dayLog).run();
+      tx.delete(quest).run();
+      tx.delete(player).where(eq(player.id, PLAYER_ID)).run();
+    });
   },
 };

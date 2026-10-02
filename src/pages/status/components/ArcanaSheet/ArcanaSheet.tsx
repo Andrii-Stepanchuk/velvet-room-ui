@@ -3,7 +3,7 @@ import { AccessibilityInfo, Pressable, StyleSheet, Text, View, findNodeHandle } 
 import Animated, { type SharedValue } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { BackTab, SectionLabel } from '@/components/ui';
+import { BackTab, SectionLabel, SheetSurface } from '@/components/ui';
 import { PAGE_PADDING_X } from '@/constants/layout';
 import { ARCANA, type Arcana } from '@/lib/game';
 import { textShade } from '@/lib/style';
@@ -11,7 +11,6 @@ import { ARCANA_SHEET } from '../../config/arcanaSheet';
 import { useArcanaSheetStyles } from '../../hooks/useArcanaSheetStyles';
 import { ArcanaCard } from './ArcanaCard';
 import { ArcanaListRow } from './ArcanaListRow';
-import { SheetSurface } from './SheetSurface';
 
 const TITLE_STYLE = [textShade, { lineHeight: ARCANA_SHEET.titleLineHeight }];
 
@@ -44,7 +43,7 @@ export const ArcanaSheet = memo(function ArcanaSheet({
         />
       </Animated.View>
       <Animated.View pointerEvents="box-none" style={[styles.sheet, { height: height + ARCANA_SHEET.lift }, sheet]}>
-        <SheetSurface width={width} height={height + rise} rise={rise} top={ARCANA_SHEET.lift - rise} />
+        <SheetSurface width={width} height={height + rise} rise={rise} top={ARCANA_SHEET.lift - rise} gradientId="arcanaField" />
         <Animated.ScrollView
           onScroll={onScroll}
           scrollEventThrottle={16}

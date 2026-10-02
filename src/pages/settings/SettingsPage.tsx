@@ -64,7 +64,7 @@ export function SettingsPage() {
           <EntranceSection onReplay={replayEntrance} />
           {__DEV__ && (
             <View style={styles.section}>
-              <TestingSection rows={testing.rows} onToggle={testing.toggle} />
+              <TestingSection rows={testing.rows} onToggle={testing.toggle} onSeedQuests={testing.seedQuests} />
             </View>
           )}
           <View style={styles.danger}>

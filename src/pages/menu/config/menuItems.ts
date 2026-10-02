@@ -1,4 +1,4 @@
-export type MenuTarget = 'Status' | 'Stats' | 'Settings';
+export type MenuTarget = 'Status' | 'Tasks' | 'Stats' | 'Settings';
 
 export interface MenuItem {
   key: string;
@@ -9,7 +9,7 @@ export interface MenuItem {
 
 export const MENU_ITEMS: readonly MenuItem[] = [
   { key: 'status', label: 'STATUS', subtitle: 'Current state & moon', target: 'Status' },
-  { key: 'tasks', label: 'TASKS', subtitle: "Today's quests", target: null },
+  { key: 'tasks', label: 'TASKS', subtitle: "Today's quests", target: 'Tasks' },
   { key: 'stats', label: 'STATS', subtitle: 'Life stats & ranks', target: 'Stats' },
   { key: 'bonds', label: 'BONDS', subtitle: 'Your social links', target: null },
   { key: 'journal', label: 'JOURNAL', subtitle: 'History & streak', target: null },

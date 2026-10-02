@@ -6,6 +6,8 @@ Velvet Room reframes everyday personal growth as a Persona-3-reload-style role-p
 
 This document defines the *language*, the *core concepts*, and the *rules* of the app from a product point of view. It deliberately leaves out UI/screen requirements. Everything marked **tunable** is a starting value meant to live in central configuration so it can be balanced without code changes.
 
+**The XP economy** (quest pricing, the award formula, growth curves, the day, and the 22 Arcana blessings) is specified exactly in [`docs/xp-rules.md`](xp-rules.md), the Rulebook. Where the two documents overlap, the Rulebook wins.
+
 ---
 
 ## 1. Terminology & Glossary
@@ -16,7 +18,11 @@ This document defines the *language*, the *core concepts*, and the *rules* of th
 | **Overall Level / Overall XP** | A single headline progress track fed by every completed quest. Gives the player a sense of total momentum independent of any one stat. |
 | **Life Stat** (Stat) | One of five dimensions of growth the player develops: *Knowledge, Guts, Proficiency, Kindness, Charm*. Each has its own level, progress bar, and rank. |
 | **Rank / Rank Tier** | A named milestone inside a stat. Every stat has **8 ranks**, each with a themed name (e.g. Knowledge: *Curious → … → Luminary*). A stat's level (1–8) selects the current rank. |
-| **Quest** (Task) | A concrete real-world action the player commits to. Completing it awards XP to exactly one **linked stat** (and to the Overall Level). |
+| **Quest** (Task) | A concrete real-world action the player commits to. Completing (**clearing**) it awards XP to exactly one **linked stat** (and to the Overall Level). |
+| **Effort / Challenge** | The two choices that price a quest: how long it takes (QUICK → EPIC) and how far past comfort it goes (ROUTINE, STRETCH, HARD). Base XP = effort × challenge (Rulebook §2). |
+| **Repeat** | When a quest is on: once (on a date, carrying forward until cleared), daily, or on chosen weekdays. |
+| **Ledger** | The permanent list of XP awards (the `xp_award` table), one per cleared quest per day, each frozen when earned. Stat levels and the Overall Level are derived from it. |
+| **Blessing** | The one XP bonus the player's current Arcana grants when its condition holds (Rulebook §6). |
 | **XP** | Experience points. Earned by completing quests; fills bars; may be multiplied by active boosts. |
 | **Progress Bar / Bar Fill** | A track defined by current XP toward the next level. When it fills, it triggers a level-up (and, for a stat, a rank-up). |
 | **Overflow** | XP earned beyond what a level needs. It **carries over** into the next level rather than being lost. |
@@ -28,7 +34,7 @@ This document defines the *language*, the *core concepts*, and the *rules* of th
 | **Full Moon** | A whole **day** on which quests earn a larger, all-day boost: the local calendar day that contains the real full-moon moment. |
 | **Moon Phase** | The current step of an 8-phase lunar cycle (New → … → Full → … → Waning Crescent). Drives atmosphere and the Full Moon boost. |
 | **Bond** (Social Link) | A tracked real relationship. Has a rank from 0–10 shown as **pips**, a short note, a color, and an **Arcana**. |
-| **Arcana** | A thematic card identity attached to a bond (e.g. *The Compass*). **Cosmetic in V1**; reserved to carry gameplay meaning later. |
+| **Arcana** | One of the 22 Major Arcana, read from the player's two strongest stats (The Fool when balanced, The World when everything is rank 7+). Each grants a **blessing**. Bonds carry their own card names (e.g. *The Compass*). |
 | **Pip** | One unit of bond rank in the UI: filled pips out of the maximum. |
 | **Hue** | A per-stat or per-bond accent color used for bars, cards, and highlights. |
 | **Day Rollover** | The local-midnight transition that resets the day's quests, advances history, and recomputes the moon phase. |
@@ -91,9 +97,9 @@ A quest is a concrete action the player commits to (e.g. *Deep work block — 90
 Bonds turn the player's real relationships into a gentle, trackable system: each person has a rank from 0–10, a short note, a color, and an Arcana. In V1 bonds are nudged forward by the player after meaningful contact.
 **Why it matters:** growth isn't only individual. Bonds encourage the player to invest in people, and they open a whole second axis of long-term depth for the product.
 
-### Arcana — flavour now, depth later
-Every bond carries an **Arcana** — a thematic card identity like *The Compass* or *The Lantern*. In V1 it is purely cosmetic.
-**Why it matters:** it adds character and a light sense of collection today, and it is a deliberate hook for the future — Arcana can later grant stat bonuses or unlock relationship storylines without any redesign.
+### Arcana — who your growth says you are
+The player holds one of the 22 Major Arcana, read from the shape of their stats: the ordered pair of their two strongest stats names the card (*Kindness ▸ Knowledge* is The Star), an even spread is The Fool, and every stat at rank 7+ is The World. Each card grants one **blessing**, a small, precisely conditioned XP bonus (Rulebook §6). Bonds keep their own card names (*The Compass*, *The Lantern*) as flavour.
+**Why it matters:** a new player starts as The Fool, the open road, and the card shifts as they grow, so the same stats that describe them also change how the next quest pays. It turns stat balance into a choice.
 
 ### The lunar cycle & boosts — the rhythm of the month
 An 8-phase moon runs continuously and sets the daily mood. Two conditions turn it into real stakes:
@@ -116,15 +122,15 @@ This section makes the rules precise. Values marked **tunable** are starting poi
 ### 4.1 Earning XP from a quest
 When the player marks an incomplete quest as done, in one step:
 
-1. Take the quest's **base XP** and its **linked stat**.
-2. Work out the active **boost multiplier** for the completion time (§4.2) → `mult`.
-3. Award: `awardedXP = round(baseXP × mult)`.
+1. Take the quest's **base XP** (effort × challenge, Rulebook §2) and its **linked stat**.
+2. Work out the active **boost multiplier** for the completion time (§4.2) → `mult`, and whether the current Arcana's **blessing** applies → `blessing`.
+3. Award: `awardedXP = round(baseXP × mult × (1 + blessing))` (Rulebook §3).
 4. Add `awardedXP` to the **linked stat** and resolve any level/rank-ups (§4.3).
 5. Add the same `awardedXP` to the **Overall Level** and resolve any level-up.
 6. Mark the quest done, stamp the time, and record it in **History**.
 7. If a rank-up happened, show the *RANK UP* moment.
 
-> **Undoing a completion.** The prototype lets a done quest be toggled back but does **not** remove the XP already earned. The simplest, least-exploitable rule for V1 is *XP awards are permanent for the day*. (Open decision.)
+> **Undoing a completion (decided).** A quest cleared today can be un-checked until midnight; its exact award is removed from the ledger, and because levels are derived from the ledger, any level it caused is undone too. Past days are locked (Rulebook §5.2).
 
 ### 4.2 When boosts apply, and how they stack
 Two independent conditions are checked against the completion time:
@@ -152,7 +158,8 @@ while xp >= maxXp:
 
 - The loop handles a big award that crosses **several** levels at once.
 - A stat's level *is* its rank pointer, so a stat level-up is always a rank-up.
-- **Growth multipliers (tunable):** stats **×1.25**, Overall Level **×1.15** — later levels take progressively more XP, so early wins come fast and long-term mastery stays meaningful.
+- **Curves (tunable, Rulebook §4):** stats start at **450** XP and grow **×1.5** up to rank 8 (≈ a week to rank 2, ≈ six months to rank 8); the Overall Level starts at **200** and grows **×1.08** up to 99. Later levels take progressively more XP, so early wins come fast and long-term mastery stays meaningful.
+- Levels are **derived** from lifetime XP in the ledger, which keeps undo exact and lets the curves be rebalanced without rewriting history.
 
 ### 4.4 The moon phase
 Eight phases drive the mood and the Full Moon boost:
@@ -167,24 +174,17 @@ Eight phases drive the mood and the Full Moon boost:
 **V1:** compute the *real* phase from the device date so the in-app moon matches the sky. The four principal phases (New Moon, First Quarter, Full Moon, Last Quarter) are instants, computed with Meeus' true-phase algorithm (*Astronomical Algorithms*, ch. 49, accurate to about a minute). A principal phase names only the local calendar day that contains its instant; the days between take the intermediate names (Waxing Crescent, Waxing Gibbous, Waning Gibbous, Waning Crescent). The **Full Moon day** — the boost day — is therefore exactly one local calendar day per lunar cycle, and the countdown counts calendar days to it. The disc's lit fraction follows the cycle position between the true New and Full Moon instants. The header, the calendar, and the boost logic must all read from the **same** source so they never disagree.
 
 ### 4.5 The daily reset
-At local midnight: the day's quests reset to not-done; History advances to the new date and the moon phase is recomputed; the streak goes up if yesterday was fully cleared, or resets to zero if it wasn't. Past History is never changed — it is the permanent record.
+At local midnight: the day's quests reset to not-done; History advances to the new date and the moon phase is recomputed; the streak goes up if yesterday was fully cleared, or resets to zero if it wasn't (a day with nothing scheduled neither extends nor breaks it). Uncleared one-off quests carry forward. Past History is never changed — it is the permanent record (Rulebook §5).
 
 ### 4.6 Growing a bond
-A bond advances by raising its rank toward the maximum (0 → 10). In **V1** this is a **manual** action the player takes after meaningful contact; automatic or quest-linked progression is deferred. The **Arcana** is a name only in V1, reserved to later grant effects (a stat bonus, a storyline) without changing anything else. Reaching the maximum rank is a natural hook for a future "storyline finale."
+A bond advances by raising its rank toward the maximum (0 → 10). In **V1** this is a **manual** action the player takes after meaningful contact; automatic or quest-linked progression is deferred. A bond's card name is flavour only in V1, reserved to later grant effects (a stat bonus, a storyline) without changing anything else. Reaching the maximum rank is a natural hook for a future "storyline finale."
 
 ### 4.7 Balancing levers (tunable)
-All the numbers a product owner would adjust to tune the feel, kept in one place: stat growth (×1.25) and Overall growth (×1.15); the Dark Hour window (21:00–24:00) and its multiplier (×1.5); the Full Moon multiplier (×2.0); the stacking rule and its cap (×3.0); and the suggested quest XP bands (small 30–50, medium 60–80, large 90+).
+All the numbers a product owner would adjust to tune the feel live in `src/constants/config.ts` and are listed in Rulebook §8: the effort points and challenge factors (which produce the quest XP bands: small 30–50, medium 55–80, large 90+); the stat curve (450 · ×1.5) and Overall curve (200 · ×1.08); the Dark Hour window (21:00–24:00) and its multiplier (×1.5); the Full Moon multiplier (×2.0); the stacking rule and its cap (×3.0); and the blessing thresholds.
 
 ### 4.8 Worked examples
 
-**A — a normal completion (no boost).**
-Knowledge is level 5 with 340 of 500 XP. The player finishes *Read 20 pages* (base 45) in the afternoon on an ordinary day. `mult = 1.0`, so it awards 45. Knowledge moves to 385 / 500 — no rank-up. The Overall Level also gains 45.
-
-**B — Dark Hour on a Full Moon.**
-Same Knowledge at 340 / 500. The player finishes *Deep work block* (base 80) at 22:10 on a Full Moon day. `mult = 1.5 × 2.0 = ×3.0`, so it awards 240. Knowledge reaches 580, which is past 500 → **rank-up** to level 6 with 80 XP carried over, and the next level now needs 625. Knowledge's rank name advances to *Sage*.
-
-**C — one award, several levels.**
-Charm is level 2 with 80 of 350 XP. A large 300-XP quest completed during the Dark Hour (×1.5) awards 450. Charm goes to 530, crosses 350 → level 3 with 180 carried over; 180 is below the new requirement of 438, so it lands at level 3 with 180 / 438.
+The worked examples (an ordinary clear, Dark Hour on a Full Moon with a blessing, a multi-rank award, undo, The Moon's early Dark Hour, and Judgement) live in Rulebook §7, computed with the current curves.
 
 ---
 
@@ -198,19 +198,20 @@ Charm is level 2 with 80 of 350 XP. A large 300-XP quest completed during the Da
 | **Kindness** | Considerate | Warm | Caring | Generous | Selfless | Nurturing | Devoted | Radiant |
 | **Charm** | Shy | Present | Poised | Magnetic | Captivating | Charismatic | Iconic | Legendary |
 
-## Appendix B — Seed data (demo)
+## Appendix B — Demo quests (dev seed)
 
-**Stats**
+A new player starts with every stat at rank 1, Overall Level 1 and The Fool. The dev-only **Seed demo quests** action (Settings → TESTING) adds this daily set:
 
-| Stat | Level | XP | Max XP | Hue |
-|---|---|---|---|---|
-| Knowledge | 5 | 340 | 500 | `#6FB4FF` |
-| Guts | 3 | 120 | 400 | `#FF9F5C` |
-| Proficiency | 4 | 290 | 450 | `#5FE0D6` |
-| Kindness | 6 | 410 | 600 | `#FF8FC0` |
-| Charm | 2 | 80 | 350 | `#B39BFF` |
+| Quest | Stat | Effort · Challenge | Base XP |
+|---|---|---|---|
+| Deep work block — 90 min | Knowledge | SESSION · STRETCH | 80 |
+| Read 20 pages | Knowledge | SHORT · ROUTINE | 45 |
+| Morning cold shower | Guts | QUICK · HARD | 45 |
+| Gym — pull day | Proficiency | SESSION · ROUTINE | 65 |
+| Call a friend to check in | Kindness | SHORT · ROUTINE | 45 |
+| Introduce yourself to someone new | Charm | QUICK · HARD | 45 |
 
-**Overall Level:** 24, with 720 of 1000 XP.
+**Stat hues:** Knowledge `#6FB4FF`, Guts `#FF9F5C`, Proficiency `#5FE0D6`, Kindness `#FF8FC0`, Charm `#B39BFF`.
 
 **Bonds**
 

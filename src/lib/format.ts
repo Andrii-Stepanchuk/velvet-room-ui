@@ -52,3 +52,20 @@ export function moonCaption(phaseName: string, cycle: LunarCycle): { text: strin
     label: `${phaseName}, day ${day} of ${cycle.length}`,
   };
 }
+
+const WEEKDAY_SHORT = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'] as const;
+const WEEKDAYS_MASK = 0b0111110;
+const EVERY_DAY_MASK = 0b1111111;
+
+export function formatWeekdays(mask: number): string {
+  if (mask === EVERY_DAY_MASK) return 'DAILY';
+  if (mask === WEEKDAYS_MASK) return 'WEEKDAYS';
+  return [1, 2, 3, 4, 5, 6, 0]
+    .filter((day) => (mask & (1 << day)) !== 0)
+    .map((day) => WEEKDAY_SHORT[day])
+    .join(' ');
+}
+
+export function formatPercent(fraction: number): string {
+  return `+${Math.round(fraction * 100)}%`;
+}

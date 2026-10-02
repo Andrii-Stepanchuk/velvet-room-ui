@@ -1,3 +1,4 @@
+export { ActionPlate } from './ActionPlate';
 export { BackTab } from './BackTab';
 export { DateTab } from './DateTab';
 export { EdgeTab } from './EdgeTab';
@@ -6,6 +7,7 @@ export { NameInput } from './NameInput';
 export { PageHeader } from './PageHeader/PageHeader';
 export { ProgressRing } from './ProgressRing';
 export { SectionLabel } from './SectionLabel';
+export { SheetSurface } from './SheetSurface';
 export { SkewButton } from './SkewButton';
 export { SkewPanel } from './SkewPanel';
 export { SoftGlow } from './SoftGlow';

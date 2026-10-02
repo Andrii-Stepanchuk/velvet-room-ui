@@ -29,7 +29,7 @@ export function useBoostRows(nextFullMoon: Date, daysUntilFullMoon: number, boos
         'darkHour',
         formatMultiplier(darkHour.multiplier),
         'DARK HOUR',
-        `${formatHour(darkHour.startHour)}–${formatHour(darkHour.endHour)} · NIGHTLY`,
+        `${formatHour(boosts.darkHourStart)}–${formatHour(darkHour.endHour)} · NIGHTLY`,
         boosts.darkHour,
       ),
       row('fullMoon', formatMultiplier(fullMoonMultiplier), 'FULL MOON', `ALL DAY · ${next}`, boosts.fullMoon),
