@@ -1,10 +1,7 @@
 import { Easing } from 'react-native-reanimated';
 
 import { PAGE_PADDING_X } from '@/constants/layout';
-
-function slantOffset(height: number, deg: number): number {
-  return height * Math.tan((deg * Math.PI) / 180);
-}
+import { slantOffset } from '@/lib/style';
 
 export const ARCANA_SHEET = {
   heightRatio: 0.8,

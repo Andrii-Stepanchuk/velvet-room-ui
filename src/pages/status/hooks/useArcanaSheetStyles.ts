@@ -8,6 +8,7 @@ import {
 } from 'react-native-reanimated';
 
 import { slideIn, staggered } from '@/lib/motion';
+import { slantOffset } from '@/lib/style';
 import { ARCANA_CARD, ARCANA_SHEET } from '../config/arcanaSheet';
 
 const { count, spread, slide, titleSlide } = ARCANA_SHEET.layers;
@@ -19,7 +20,7 @@ export function useArcanaSheetStyles(progress: SharedValue<number>) {
   const { width, height: screenHeight } = useWindowDimensions();
   const reducedMotion = useReducedMotion();
   const height = Math.round(screenHeight * ARCANA_SHEET.heightRatio);
-  const rise = width * Math.tan((ARCANA_SHEET.topSlant * Math.PI) / 180);
+  const rise = slantOffset(width, ARCANA_SHEET.topSlant);
   const travel = height + ARCANA_SHEET.lift;
 
   const scrollY = useSharedValue(0);

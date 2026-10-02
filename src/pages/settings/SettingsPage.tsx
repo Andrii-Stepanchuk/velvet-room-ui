@@ -11,10 +11,12 @@ import { useLunarDay } from '@/hooks/useLunarDay';
 import { useScreenTransition } from '@/hooks/useScreenTransition';
 import { useProgress } from '@/lib/data/hooks';
 import type { RootStackParamList } from '@/navigation/navigation.types';
-import { BoostsSection } from './components/BoostsSection';
+import { AccountSection } from './components/AccountSection';
+import { BoostsSection } from './components/BoostsSection/BoostsSection';
 import { EntranceSection } from './components/EntranceSection';
-import { ProfileSection } from './components/ProfileSection';
+import { PlayerSection } from './components/PlayerSection/PlayerSection';
 import { TestingSection } from './components/TestingSection';
+import { SETTINGS_GAP } from './config/settingsLayout';
 import { useBoostRows } from './hooks/useBoostRows';
 import { useDeleteAccount } from './hooks/useDeleteAccount';
 import { useEntranceReplay } from './hooks/useEntranceReplay';
@@ -26,13 +28,13 @@ export function SettingsPage() {
   const insets = useSafeAreaInsets();
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList, 'Settings'>>();
   const { progress, leaving, leave } = useScreenTransition();
-  const { now, moon, nextFullMoon, daysUntilFullMoon } = useLunarDay();
+  const { now, moon, nextFullMoon, daysUntilFullMoon, boosts } = useLunarDay();
   const { overall } = useProgress();
   const layers = useSettingsLayers(progress);
   const rename = useRename();
   const deleteAccount = useDeleteAccount(leave);
   const replayEntrance = useEntranceReplay(leave);
-  const boostRows = useBoostRows(nextFullMoon, daysUntilFullMoon);
+  const boostRows = useBoostRows(nextFullMoon, daysUntilFullMoon, boosts);
   const testing = useTestingRows();
   const back = useCallback(() => navigation.goBack(), [navigation]);
 
@@ -46,26 +48,29 @@ export function SettingsPage() {
         <PageHeader date={now} title="SETTINGS" moon={moon} level={overall.level} onBack={back} progress={progress} />
       </View>
       <ScrollView className="flex-1" contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
-        <Animated.View style={layers.profile}>
-          <ProfileSection
+        <Animated.View style={layers.player}>
+          <PlayerSection
             value={rename.value}
             onChangeText={rename.setValue}
             canSave={rename.canSave}
+            empty={rename.empty}
             onSave={rename.save}
-            onDelete={deleteAccount}
           />
         </Animated.View>
         <Animated.View style={[styles.section, layers.boosts]}>
           <BoostsSection rows={boostRows} />
         </Animated.View>
-        <Animated.View style={[styles.section, layers.entrance]}>
+        <Animated.View style={[styles.section, layers.rest]}>
           <EntranceSection onReplay={replayEntrance} />
+          {__DEV__ && (
+            <View style={styles.section}>
+              <TestingSection rows={testing.rows} onToggle={testing.toggle} />
+            </View>
+          )}
+          <View style={styles.danger}>
+            <AccountSection onDelete={deleteAccount} />
+          </View>
         </Animated.View>
-        {__DEV__ && (
-          <Animated.View style={[styles.section, layers.entrance]}>
-            <TestingSection rows={testing.rows} onToggle={testing.toggle} />
-          </Animated.View>
-        )}
       </ScrollView>
     </View>
   );
@@ -73,6 +78,7 @@ export function SettingsPage() {
 
 const styles = StyleSheet.create({
   padded: { paddingHorizontal: PAGE_PADDING_X },
-  content: { paddingHorizontal: PAGE_PADDING_X, paddingTop: 28, paddingBottom: 24 },
-  section: { marginTop: 32 },
+  content: { paddingHorizontal: PAGE_PADDING_X, paddingTop: SETTINGS_GAP.top, paddingBottom: SETTINGS_GAP.bottom },
+  section: { marginTop: SETTINGS_GAP.section },
+  danger: { marginTop: SETTINGS_GAP.danger },
 });

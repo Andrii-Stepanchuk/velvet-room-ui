@@ -36,3 +36,8 @@ export const pixelAlignedBorderWidth = PixelRatio.roundToNearestPixel(1);
 export function skewX(deg: number): ViewStyle {
   return { transform: [{ skewX: `${deg}deg` }] };
 }
+
+export function slantOffset(length: number, deg: number): number {
+  'worklet';
+  return length * Math.tan((deg * Math.PI) / 180);
+}

@@ -14,3 +14,8 @@ export function slideIn(t: number, dx: number, dy: number): ViewStyle {
   'worklet';
   return { opacity: t, transform: [{ translateX: (1 - t) * dx }, { translateY: (1 - t) * dy }] };
 }
+
+export function ramp(t: number, start: number, end: number): number {
+  'worklet';
+  return Math.min(Math.max((t - start) / (end - start), 0), 1);
+}

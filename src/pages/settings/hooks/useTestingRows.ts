@@ -14,8 +14,8 @@ export function useTestingRows() {
   const toggle = useBoostOverrides((state) => state.toggle);
   const rows = useMemo<readonly TestingRow[]>(
     () => [
-      { key: 'fullMoon', label: 'FORCE FULL MOON', on: fullMoon },
-      { key: 'darkHour', label: 'FORCE DARK HOUR', on: darkHour },
+      { key: 'fullMoon', label: 'Force Full Moon', on: fullMoon },
+      { key: 'darkHour', label: 'Force Dark Hour', on: darkHour },
     ],
     [fullMoon, darkHour],
   );

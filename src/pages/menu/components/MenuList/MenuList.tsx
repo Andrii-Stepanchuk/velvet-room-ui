@@ -3,10 +3,10 @@ import { View } from 'react-native';
 import type { SharedValue } from 'react-native-reanimated';
 
 import { MENU_ITEMS } from '../../config/menuItems';
-import { MENU_ENTRY_HEIGHT } from '../../config/menuLayout';
+import { MENU_ENTRY } from '../../config/menuLayout';
 import { useHighlightStyle } from '../../hooks/useHighlightStyle';
 import { HighlightBar } from './HighlightBar';
-import { MenuEntry } from './MenuEntry';
+import { MenuEntry } from './MenuEntry/MenuEntry';
 
 export const MenuList = memo(function MenuList({
   progress,
@@ -24,7 +24,7 @@ export const MenuList = memo(function MenuList({
   const highlightStyle = useHighlightStyle(progress, highlightY, shake);
 
   return (
-    <View style={{ height: MENU_ITEMS.length * MENU_ENTRY_HEIGHT }}>
+    <View style={{ height: MENU_ITEMS.length * MENU_ENTRY.height }}>
       <HighlightBar style={highlightStyle} />
       {MENU_ITEMS.map((item, index) => (
         <MenuEntry

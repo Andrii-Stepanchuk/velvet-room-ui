@@ -18,5 +18,5 @@ export function useRename() {
     Keyboard.dismiss();
   }, [canSave, name, saveName]);
 
-  return { value, setValue, canSave, save };
+  return { value, setValue, canSave, empty: name.length === 0, save };
 }

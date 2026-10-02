@@ -4,7 +4,7 @@ import { Pressable, Text, View } from 'react-native';
 import { SkewPanel } from '@/components/ui';
 import { colors } from '@/constants/theme';
 import type { Arcana } from '@/lib/game';
-import { withAlpha } from '@/lib/style';
+import { slantOffset, withAlpha } from '@/lib/style';
 import { ARCANA_TAG } from '../../config/statusLayout';
 import { MiniTarot } from './MiniTarot';
 
@@ -12,7 +12,7 @@ const FILL = withAlpha(colors.background[700], 0.85);
 const FILL_PRESSED = withAlpha(colors.background[400], 0.9);
 const STROKE = withAlpha(colors.accent, 0.3);
 const STROKE_PRESSED = withAlpha(colors.accent, 0.6);
-const SLANT_OFFSET = ARCANA_TAG.height * Math.tan((ARCANA_TAG.slant * Math.PI) / 180);
+const SLANT_OFFSET = slantOffset(ARCANA_TAG.height, ARCANA_TAG.slant);
 const PLATE_STYLE = { height: ARCANA_TAG.height, paddingLeft: SLANT_OFFSET + 3, paddingRight: SLANT_OFFSET + 12 };
 const HIT_SLOP = { top: ARCANA_TAG.hitSlop, bottom: ARCANA_TAG.hitSlop, left: 8, right: 8 };
 

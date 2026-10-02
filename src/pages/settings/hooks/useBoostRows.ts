@@ -1,24 +1,45 @@
 import { useMemo } from 'react';
 
 import { CONFIG } from '@/constants/config';
+import type { Boosts } from '@/lib/game';
 import { formatHour, formatMultiplier, formatShortDate } from '@/lib/format';
 
+export type BoostKey = 'darkHour' | 'fullMoon' | 'stacked';
+
 export interface BoostRow {
-  label: string;
+  key: BoostKey;
   value: string;
+  unit: string;
+  caption: string;
+  live: boolean;
+  label: string;
 }
 
-export function useBoostRows(nextFullMoon: Date, daysUntilFullMoon: number): readonly BoostRow[] {
+function row(key: BoostKey, value: string, unit: string, caption: string, live: boolean): BoostRow {
+  return { key, value, unit, caption, live, label: `${unit}, ${value}, ${caption}${live ? ', live now' : ''}` };
+}
+
+export function useBoostRows(nextFullMoon: Date, daysUntilFullMoon: number, boosts: Boosts): readonly BoostRow[] {
   return useMemo(() => {
     const { darkHour, fullMoonMultiplier, cap } = CONFIG.boosts;
+    const stacked = Math.min(darkHour.multiplier * fullMoonMultiplier, cap);
+    const next = daysUntilFullMoon === 0 ? 'TODAY' : `NEXT ${formatShortDate(nextFullMoon)}`;
     return [
-      {
-        label: 'DARK HOUR',
-        value: `${formatHour(darkHour.startHour)}–${formatHour(darkHour.endHour)} · ${formatMultiplier(darkHour.multiplier)}`,
-      },
-      { label: 'FULL MOON', value: `All day · ${formatMultiplier(fullMoonMultiplier)}` },
-      { label: 'STACKED', value: `Capped at ${formatMultiplier(cap)}` },
-      { label: 'NEXT FULL MOON', value: daysUntilFullMoon === 0 ? 'Now' : formatShortDate(nextFullMoon) },
+      row(
+        'darkHour',
+        formatMultiplier(darkHour.multiplier),
+        'DARK HOUR',
+        `${formatHour(darkHour.startHour)}–${formatHour(darkHour.endHour)} · NIGHTLY`,
+        boosts.darkHour,
+      ),
+      row('fullMoon', formatMultiplier(fullMoonMultiplier), 'FULL MOON', `ALL DAY · ${next}`, boosts.fullMoon),
+      row(
+        'stacked',
+        formatMultiplier(stacked),
+        'BOTH',
+        stacked >= cap ? 'STACKED · THE CAP' : 'STACKED',
+        boosts.darkHour && boosts.fullMoon,
+      ),
     ];
-  }, [nextFullMoon, daysUntilFullMoon]);
+  }, [nextFullMoon, daysUntilFullMoon, boosts]);
 }

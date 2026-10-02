@@ -3,6 +3,7 @@ import { StyleSheet, View, type StyleProp, type ViewStyle } from 'react-native';
 import Svg, { Polygon } from 'react-native-svg';
 
 import { useLayoutSize } from '@/hooks/useLayoutSize';
+import { slantOffset } from '@/lib/style';
 
 const SHADOW_OFFSETS = [3, 2, 1] as const;
 const SHADOW_SVG_STYLE: ViewStyle = { position: 'absolute', top: 0, left: 0, right: 0, bottom: -SHADOW_OFFSETS[0], overflow: 'visible' };
@@ -27,7 +28,7 @@ export const SkewPanel = memo(function SkewPanel({
   const { size, onLayout } = useLayoutSize();
   const { width: w, height: h } = size;
   const inset = stroke ? 0.5 : 0;
-  const offset = h * Math.tan((slant * Math.PI) / 180);
+  const offset = slantOffset(h, slant);
   const points = [
     `${offset + inset},${inset}`,
     `${w - inset},${inset}`,
@@ -42,7 +43,7 @@ export const SkewPanel = memo(function SkewPanel({
         <Svg style={svgStyle} pointerEvents="none">
           {shadow &&
             SHADOW_OFFSETS.map((dy) => (
-              <Polygon key={dy} points={points} fill={shadow} fillOpacity={0.3} translateY={dy} />
+              <Polygon key={dy} points={points} fill={shadow} fillOpacity={0.3} transform={`translate(0 ${dy})`} />
             ))}
           <Polygon points={points} fill={fill} stroke={stroke} strokeWidth={stroke ? 1 : 0} />
         </Svg>

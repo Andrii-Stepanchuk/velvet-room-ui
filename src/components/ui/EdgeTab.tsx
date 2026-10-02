@@ -2,9 +2,10 @@ import { memo, type ReactNode } from 'react';
 import type { ViewStyle } from 'react-native';
 
 import { EDGE_TAB_HEIGHT, EDGE_TAB_SLANT, PAGE_PADDING_X } from '@/constants/layout';
+import { slantOffset } from '@/lib/style';
 import { SkewPanel } from './SkewPanel';
 
-const SLANT_OFFSET = EDGE_TAB_HEIGHT * Math.tan((EDGE_TAB_SLANT * Math.PI) / 180);
+const SLANT_OFFSET = slantOffset(EDGE_TAB_HEIGHT, EDGE_TAB_SLANT);
 const BLEED = PAGE_PADDING_X + SLANT_OFFSET;
 const INNER = SLANT_OFFSET + 16;
 

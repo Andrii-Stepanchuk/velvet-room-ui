@@ -51,7 +51,7 @@ export const PageHeader = memo(function PageHeader({
         </Animated.View>
       </View>
       <Animated.View style={layers.title}>
-        <Text accessibilityRole="header" className="mt-4 self-start font-display-italic text-2xl text-white" style={TITLE_STYLE}>
+        <Text accessibilityRole="header" className="mt-7 self-start font-display-italic text-2xl text-white" style={TITLE_STYLE}>
           {title}
         </Text>
       </Animated.View>
