@@ -3,13 +3,14 @@ import Animated from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { BubbleField } from './components/BubbleField/BubbleField';
+import { Ceremony } from './components/Ceremony/Ceremony';
+import { ContinuePrompt } from './components/Ceremony/ContinuePrompt';
 import { EntranceVideo } from './components/EntranceVideo';
 import { Flash } from './components/Flash';
 import { RegisterForm } from './components/RegisterForm/RegisterForm';
 import { SkipButton } from './components/SkipButton';
 import { TitleBlock } from './components/TitleBlock';
 import { VelvetDoor } from './components/VelvetDoor/VelvetDoor';
-import { WelcomeBlock } from './components/WelcomeBlock';
 import { CLIP_FIRST_FRAME_COLOR, ENTRANCE_VIDEO_SOURCE } from './config/entranceVideo';
 import { useEntranceLayerStyles } from './hooks/useEntranceLayerStyles';
 import { useEntranceSequence } from './hooks/useEntranceSequence';
@@ -52,8 +53,8 @@ export function RegisterPage() {
         </Animated.View>
       )}
 
-      <Animated.View pointerEvents="none" style={[StyleSheet.absoluteFill, layer.welcome]}>
-        <WelcomeBlock name={seq.name} />
+      <Animated.View pointerEvents="none" style={[StyleSheet.absoluteFill, layer.ceremony]}>
+        {seq.name.length > 0 && <Ceremony name={seq.name} anim={anim} />}
       </Animated.View>
 
       {!replay && (
@@ -64,6 +65,13 @@ export function RegisterPage() {
           <RegisterForm onSubmit={seq.begin} />
         </Animated.View>
       )}
+
+      <ContinuePrompt
+        active={seq.canAdvance}
+        visible={seq.awaitingTap}
+        onPress={seq.advance}
+        bottom={insets.bottom + 32}
+      />
 
       <SkipButton visible={seq.showSkip} onPress={seq.skip} bottom={insets.bottom + 18} />
     </View>

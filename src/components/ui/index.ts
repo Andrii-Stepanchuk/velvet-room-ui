@@ -10,4 +10,5 @@ export { SkewButton } from './SkewButton';
 export { SkewPanel } from './SkewPanel';
 export { SoftGlow } from './SoftGlow';
 export { StatIcon } from './StatIcon';
+export { TarotCard } from './TarotCard';
 export { UnderwaterBackground } from './UnderwaterBackground/UnderwaterBackground';

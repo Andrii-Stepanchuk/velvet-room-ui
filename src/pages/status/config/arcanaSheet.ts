@@ -49,21 +49,12 @@ export const ARCANA_PLATE = {
 } as const;
 
 export const ARCANA_CARD = {
-  width: 100,
-  height: 160,
   rotate: 7,
   enterRotate: 18,
   drop: 40,
   overlap: 14,
   gap: 14,
   edgeInset: 2,
-  emblemY: 62,
-  emblemBox: 44,
-  iconSize: 18,
-  moonSize: 32,
-  foolIllumination: 0.18,
-  archTop: 118,
-  archRadius: 20,
 } as const;
 
 export const ARCANA_BLESSING = {

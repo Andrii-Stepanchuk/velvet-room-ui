@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { VideoPlayer } from 'expo-video';
 import {
+  Easing,
   useReducedMotion,
   useSharedValue,
   withDelay,
@@ -9,10 +10,11 @@ import {
 } from 'react-native-reanimated';
 import { scheduleOnRN } from 'react-native-worklets';
 
-import { CAMERA_EASING, DOOR_EASING, TIMING_MS } from '../config/entranceTiming';
+import { CAMERA_EASING, CEREMONY_MS, DEAL_EASING, DOOR_EASING, SEAL_EASING, TIMING_MS } from '../config/entranceTiming';
 import { ENTRANCE_VIDEO_FROZEN_TAIL_S, ENTRANCE_VIDEO_SOURCE } from '../config/entranceVideo';
 
-export type EntrancePhase = 'gate' | 'opening' | 'flash' | 'clip' | 'outro' | 'done';
+export type EntrancePhase =
+  'gate' | 'opening' | 'flash' | 'clip' | 'outro' | 'contract' | 'arcana' | 'leaving' | 'done';
 
 export interface EntranceAnim {
   doorProgress: SharedValue<number>;
@@ -23,15 +25,24 @@ export interface EntranceAnim {
   formTranslate: SharedValue<number>;
   flashOpacity: SharedValue<number>;
   videoOpacity: SharedValue<number>;
-  welcomeOpacity: SharedValue<number>;
+  ceremonyOpacity: SharedValue<number>;
+  contractIn: SharedValue<number>;
+  writeProgress: SharedValue<number>;
+  sealProgress: SharedValue<number>;
+  contractLift: SharedValue<number>;
+  cardProgress: SharedValue<number>;
+  ceremonyExit: SharedValue<number>;
 }
 
 export interface EntranceSequence {
   phase: EntrancePhase;
   name: string;
   showSkip: boolean;
+  awaitingTap: boolean;
+  canAdvance: boolean;
   begin: (name: string) => void;
   skip: () => void;
+  advance: () => void;
   onFirstFrameRender: () => void;
   anim: EntranceAnim;
 }
@@ -42,13 +53,18 @@ export interface EntranceCallbacks {
 }
 
 const CLIP_ENABLED = ENTRANCE_VIDEO_SOURCE != null;
+const CLIP_PHASES: readonly EntrancePhase[] = ['opening', 'flash', 'clip'];
+const CEREMONY_PHASES: readonly EntrancePhase[] = ['contract', 'arcana'];
 
-export function useEntranceSequence(
-  player: VideoPlayer,
-  { onBegin, onComplete }: EntranceCallbacks,
-): EntranceSequence {
+function writeDuration(name: string): number {
+  const { writePerLetter, writeMin, writeMax } = CEREMONY_MS;
+  return Math.min(Math.max(name.length * writePerLetter, writeMin), writeMax);
+}
+
+export function useEntranceSequence(player: VideoPlayer, { onBegin, onComplete }: EntranceCallbacks): EntranceSequence {
   const [phase, setPhase] = useState<EntrancePhase>('gate');
   const [name, setName] = useState('');
+  const [awaitingTap, setAwaitingTap] = useState(false);
   const reducedMotion = useReducedMotion();
 
   const phaseRef = useRef<EntrancePhase>('gate');
@@ -56,6 +72,7 @@ export function useEntranceSequence(
     phaseRef.current = p;
     setPhase(p);
   }, []);
+  const nameRef = useRef('');
   const firstFrameRenderedRef = useRef(false);
   const isPlayingRef = useRef(false);
   const clipFailedRef = useRef(false);
@@ -77,7 +94,13 @@ export function useEntranceSequence(
   const formTranslate = useSharedValue(0);
   const flashOpacity = useSharedValue(0);
   const videoOpacity = useSharedValue(0);
-  const welcomeOpacity = useSharedValue(0);
+  const ceremonyOpacity = useSharedValue(0);
+  const contractIn = useSharedValue(0);
+  const writeProgress = useSharedValue(0);
+  const sealProgress = useSharedValue(0);
+  const contractLift = useSharedValue(0);
+  const cardProgress = useSharedValue(0);
+  const ceremonyExit = useSharedValue(0);
   const anim = useMemo<EntranceAnim>(
     () => ({
       doorProgress,
@@ -88,7 +111,13 @@ export function useEntranceSequence(
       formTranslate,
       flashOpacity,
       videoOpacity,
-      welcomeOpacity,
+      ceremonyOpacity,
+      contractIn,
+      writeProgress,
+      sealProgress,
+      contractLift,
+      cardProgress,
+      ceremonyExit,
     }),
     [
       doorProgress,
@@ -99,33 +128,120 @@ export function useEntranceSequence(
       formTranslate,
       flashOpacity,
       videoOpacity,
-      welcomeOpacity,
+      ceremonyOpacity,
+      contractIn,
+      writeProgress,
+      sealProgress,
+      contractLift,
+      cardProgress,
+      ceremonyExit,
     ],
   );
 
-  const revealWelcome = useCallback(() => {
+  const finish = useCallback(() => {
+    clearTimers();
+    enterPhase('done');
+    onComplete();
+  }, [clearTimers, enterPhase, onComplete]);
+
+  const awaitTap = useCallback(
+    (ms: number) => {
+      after(ms, () => setAwaitingTap(true));
+    },
+    [after],
+  );
+
+  const settleContract = useCallback(() => {
+    clearTimers();
+    flashOpacity.value = withTiming(0, { duration: CEREMONY_MS.settle });
+    contractIn.value = withTiming(1, { duration: CEREMONY_MS.settle });
+    writeProgress.value = withTiming(1, { duration: CEREMONY_MS.settle });
+    sealProgress.value = withTiming(1, { duration: CEREMONY_MS.settle, easing: SEAL_EASING });
+    awaitTap(CEREMONY_MS.settle);
+  }, [awaitTap, clearTimers, contractIn, flashOpacity, sealProgress, writeProgress]);
+
+  const settleArcana = useCallback(() => {
+    clearTimers();
+    contractLift.value = withTiming(1, { duration: CEREMONY_MS.settle });
+    cardProgress.value = withTiming(1, { duration: CEREMONY_MS.settle });
+    awaitTap(CEREMONY_MS.settle);
+  }, [awaitTap, cardProgress, clearTimers, contractLift]);
+
+  const dealArcana = useCallback(() => {
+    clearTimers();
+    setAwaitingTap(false);
+    enterPhase('arcana');
+    if (reducedMotion) {
+      contractLift.value = 1;
+      cardProgress.value = 1;
+      awaitTap(CEREMONY_MS.promptDelay);
+      return;
+    }
+    contractLift.value = withTiming(1, { duration: CEREMONY_MS.deal, easing: DEAL_EASING });
+    cardProgress.value = withTiming(1, { duration: CEREMONY_MS.deal, easing: DEAL_EASING });
+    awaitTap(CEREMONY_MS.deal + CEREMONY_MS.promptDelay);
+  }, [awaitTap, cardProgress, clearTimers, contractLift, enterPhase, reducedMotion]);
+
+  const leave = useCallback(() => {
+    clearTimers();
+    setAwaitingTap(false);
+    enterPhase('leaving');
+    if (reducedMotion) {
+      finish();
+      return;
+    }
+    ceremonyExit.value = withTiming(1, { duration: CEREMONY_MS.exit, easing: Easing.in(Easing.cubic) });
+    after(CEREMONY_MS.exit, finish);
+  }, [after, ceremonyExit, clearTimers, enterPhase, finish, reducedMotion]);
+
+  const advance = useCallback(() => {
+    const p = phaseRef.current;
+    if (p === 'contract') {
+      if (awaitingTap) dealArcana();
+      else settleContract();
+    } else if (p === 'arcana') {
+      if (awaitingTap) leave();
+      else settleArcana();
+    }
+  }, [awaitingTap, dealArcana, leave, settleArcana, settleContract]);
+
+  const beginCeremony = useCallback(() => {
     clearTimers();
     player.pause();
-    enterPhase('done');
-    flashOpacity.value = withTiming(0, { duration: TIMING_MS.welcomeFade });
-    welcomeOpacity.value = withTiming(1, { duration: TIMING_MS.welcomeFade });
-    after(TIMING_MS.welcomeFade + TIMING_MS.welcomeHold, onComplete);
-  }, [after, clearTimers, flashOpacity, player, enterPhase, onComplete, welcomeOpacity]);
+    enterPhase('contract');
+    const { plateIn, writeLead, seal, promptDelay } = CEREMONY_MS;
+    const write = writeDuration(nameRef.current);
+    flashOpacity.value = withTiming(0, { duration: TIMING_MS.ceremonyFlashOut });
+    ceremonyOpacity.value = 1;
+    contractIn.value = withTiming(1, { duration: plateIn, easing: Easing.out(Easing.cubic) });
+    writeProgress.value = withDelay(writeLead, withTiming(1, { duration: write, easing: Easing.linear }));
+    sealProgress.value = withDelay(writeLead + write, withTiming(1, { duration: seal, easing: SEAL_EASING }));
+    awaitTap(writeLead + write + seal + promptDelay);
+  }, [
+    awaitTap,
+    ceremonyOpacity,
+    clearTimers,
+    contractIn,
+    enterPhase,
+    flashOpacity,
+    player,
+    sealProgress,
+    writeProgress,
+  ]);
 
   const startOutro = useCallback(
     (duration: number) => {
-      const p = phaseRef.current;
-      if (p === 'gate' || p === 'outro' || p === 'done') return;
+      if (!CLIP_PHASES.includes(phaseRef.current)) return;
       clearTimers();
       enterPhase('outro');
       flashOpacity.value = withTiming(1, { duration }, (finished) => {
         if (!finished) return;
         videoOpacity.value = 0;
         doorOpacity.value = 0;
-        scheduleOnRN(revealWelcome);
+        scheduleOnRN(beginCeremony);
       });
     },
-    [clearTimers, doorOpacity, flashOpacity, revealWelcome, enterPhase, videoOpacity],
+    [beginCeremony, clearTimers, doorOpacity, enterPhase, flashOpacity, videoOpacity],
   );
 
   const revealClipOnceVisible = useCallback(() => {
@@ -180,15 +296,19 @@ export function useEntranceSequence(
       const trimmed = playerName.trim();
       if (phaseRef.current !== 'gate' || trimmed.length === 0) return;
       onBegin(trimmed);
+      nameRef.current = trimmed;
       setName(trimmed);
       formOpacity.value = withTiming(0, { duration: TIMING_MS.formFade });
       formTranslate.value = withTiming(26, { duration: TIMING_MS.formFade });
 
       if (reducedMotion) {
-        enterPhase('done');
+        enterPhase('contract');
+        contractIn.value = 1;
+        writeProgress.value = 1;
+        sealProgress.value = 1;
         doorOpacity.value = withTiming(0, { duration: TIMING_MS.formFade });
-        welcomeOpacity.value = withTiming(1, { duration: TIMING_MS.welcomeFade });
-        after(TIMING_MS.welcomeFade + TIMING_MS.welcomeHold, onComplete);
+        ceremonyOpacity.value = withTiming(1, { duration: CEREMONY_MS.reducedFade });
+        awaitTap(CEREMONY_MS.reducedFade);
         return;
       }
 
@@ -209,19 +329,24 @@ export function useEntranceSequence(
     [
       after,
       cameraScale,
+      cardProgress,
+      ceremonyOpacity,
+      contractIn,
+      contractLift,
       doorOpacity,
       doorProgress,
+      finish,
       flashOpacity,
       formOpacity,
       formTranslate,
       glowOpacity,
       onBegin,
-      onComplete,
       onFlashPeak,
       reducedMotion,
       enterPhase,
+      sealProgress,
       videoOpacity,
-      welcomeOpacity,
+      writeProgress,
     ],
   );
 
@@ -229,7 +354,8 @@ export function useEntranceSequence(
 
   useEffect(() => clearTimers, [clearTimers]);
 
-  const showSkip = phase === 'opening' || phase === 'flash' || phase === 'clip';
+  const showSkip = CLIP_PHASES.includes(phase);
+  const canAdvance = CEREMONY_PHASES.includes(phase);
 
-  return { phase, name, showSkip, begin, skip, onFirstFrameRender, anim };
+  return { phase, name, showSkip, awaitingTap, canAdvance, begin, skip, advance, onFirstFrameRender, anim };
 }

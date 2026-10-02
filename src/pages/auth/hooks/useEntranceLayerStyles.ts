@@ -10,7 +10,7 @@ export function useEntranceLayerStyles(anim: EntranceAnim) {
   }));
   const bubbles = useOpacityStyle(anim.formOpacity);
   const videoLayer = useOpacityStyle(anim.videoOpacity);
-  const welcome = useOpacityStyle(anim.welcomeOpacity);
+  const ceremony = useOpacityStyle(anim.ceremonyOpacity);
 
-  return { form, bubbles, videoLayer, welcome };
+  return { form, bubbles, videoLayer, ceremony };
 }

@@ -2,6 +2,7 @@ import { memo } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import Animated from 'react-native-reanimated';
 
+import { TarotCard } from '@/components/ui';
 import type { Arcana } from '@/lib/game';
 import { textShade } from '@/lib/style';
 import { ARCANA_CARD, ARCANA_HERO } from '../../config/arcanaSheet';
@@ -9,7 +10,6 @@ import type { ArcanaSheetLayers } from '../../hooks/useArcanaSheetStyles';
 import { BlessingPlate } from './BlessingPlate';
 import { EpithetBand } from './EpithetBand';
 import { NamePlate } from './NamePlate';
-import { TarotCard } from './TarotCard';
 
 export const ArcanaCard = memo(function ArcanaCard({ arcana, layers }: { arcana: Arcana; layers: ArcanaSheetLayers }) {
   return (

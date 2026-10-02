@@ -2,21 +2,23 @@ import { memo } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import Animated from 'react-native-reanimated';
-import Svg, { Defs, RadialGradient, Rect, Stop } from 'react-native-svg';
 
 import { colors, radius } from '@/constants/theme';
 import { glowShadow, withAlpha } from '@/lib/style';
 import type { EntranceAnim } from '../../hooks/useEntranceSequence';
 import { useVelvetDoorAnimation } from '../../hooks/useVelvetDoorAnimation';
 import { DoorHalf } from './DoorHalf';
+import { DoorHalo } from './DoorHalo';
+import { DOOR_HALO } from '../../config/doorHalo';
 import { DOOR_H, DOOR_W, HALF_W } from '../../config/doorSize';
 import { InnerGlow } from './InnerGlow';
 
 const SEAM = '#beebff';
+const { width: HALO_W, height: HALO_H } = DOOR_HALO.wash;
 const INNER_GLOW = glowShadow(colors.glow[300], { opacity: 0.9, radius: 40, elevation: 12 });
 
 export const VelvetDoor = memo(function VelvetDoor({ anim }: { anim: EntranceAnim }) {
-  const { container, glow, floor, leftHalf, rightHalf, seam, frame } = useVelvetDoorAnimation(anim);
+  const { container, glow, halo, leftHalf, rightHalf, seam, frame } = useVelvetDoorAnimation(anim);
 
   return (
     <Animated.View
@@ -36,20 +38,17 @@ export const VelvetDoor = memo(function VelvetDoor({ anim }: { anim: EntranceAni
     >
       <Animated.View
         style={[
-          { position: 'absolute', left: HALF_W - 150, top: DOOR_H - 4, width: 300, height: 56 },
-          floor,
+          {
+            position: 'absolute',
+            left: (DOOR_W - HALO_W) / 2,
+            top: (DOOR_H - HALO_H) / 2,
+            width: HALO_W,
+            height: HALO_H,
+          },
+          halo,
         ]}
       >
-        <Svg width={300} height={56}>
-          <Defs>
-            <RadialGradient id="floorGlow" cx="50%" cy="50%" rx="50%" ry="50%">
-              <Stop offset="0" stopColor={colors.glow[500]} stopOpacity={0.34} />
-              <Stop offset="0.7" stopColor={colors.glow[500]} stopOpacity={0} />
-              <Stop offset="1" stopColor={colors.glow[500]} stopOpacity={0} />
-            </RadialGradient>
-          </Defs>
-          <Rect width={300} height={56} fill="url(#floorGlow)" />
-        </Svg>
+        <DoorHalo />
       </Animated.View>
 
       <Animated.View
@@ -101,7 +100,17 @@ export const VelvetDoor = memo(function VelvetDoor({ anim }: { anim: EntranceAni
           },
           frame,
         ]}
-      />
+      >
+        <View
+          style={{
+            position: 'absolute',
+            inset: 0,
+            borderRadius: radius.md - 4,
+            borderWidth: 1,
+            borderColor: withAlpha(colors.textPrimarySoft, 0.5),
+          }}
+        />
+      </Animated.View>
     </Animated.View>
   );
 });

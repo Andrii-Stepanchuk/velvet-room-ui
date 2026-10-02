@@ -2,18 +2,16 @@ import { memo } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import Svg, { Circle, Defs, Line, LinearGradient, Path, Polygon, Rect, Stop } from 'react-native-svg';
 
-import { MoonDisc, StatIcon } from '@/components/ui';
+import { TAROT_CARD } from '@/constants/tarotCard';
 import { colors } from '@/constants/theme';
 import type { Arcana } from '@/lib/game';
 import { glowShadow, withAlpha } from '@/lib/style';
-import { ARCANA_CARD } from '../../config/arcanaSheet';
+import { MoonDisc } from './MoonDisc';
+import { StatIcon } from './StatIcon';
 
-const { width: W, height: H, emblemY: CY, archTop: ARCH_TOP, archRadius: AR, emblemBox: BOX } = ARCANA_CARD;
+const { width: W, height: H, emblemY: CY, archTop: ARCH_TOP, archRadius: AR, emblemBox: BOX } = TAROT_CARD;
 const CX = W / 2;
-const RAYS = Array.from({ length: 24 }, (_, i) => ({
-  angle: (i * Math.PI) / 12,
-  length: i % 2 === 0 ? 42 : 37,
-}));
+const RAYS = Array.from({ length: 24 }, (_, i) => ({ angle: (i * Math.PI) / 12, length: i % 2 === 0 ? 42 : 37 }));
 const FRAME = colors.textPrimary;
 const HAIRLINE = withAlpha(colors.accent, 0.55);
 const FAINT = withAlpha(colors.accent, 0.22);
@@ -67,12 +65,12 @@ export const TarotCard = memo(function TarotCard({ arcana }: { arcana: Arcana })
       <View style={styles.emblem}>
         {arcana.stats ? (
           arcana.stats.map((key) => (
-            <StatIcon key={key} stat={key} size={ARCANA_CARD.iconSize} color={colors.stat[key]} />
+            <StatIcon key={key} stat={key} size={TAROT_CARD.iconSize} color={colors.stat[key]} />
           ))
         ) : (
           <MoonDisc
-            size={ARCANA_CARD.moonSize}
-            illumination={arcana.id === 'world' ? 1 : ARCANA_CARD.foolIllumination}
+            size={TAROT_CARD.moonSize}
+            illumination={arcana.id === 'world' ? 1 : TAROT_CARD.foolIllumination}
             waxing
           />
         )}
@@ -97,12 +95,7 @@ const styles = StyleSheet.create({
     height: H,
     borderRadius: 3,
     backgroundColor: colors.ink,
-    ...glowShadow(colors.glow[500], {
-      opacity: 0.5,
-      radius: 18,
-      elevation: 12,
-      offsetY: 6,
-    }),
+    ...glowShadow(colors.glow[500], { opacity: 0.5, radius: 18, elevation: 12, offsetY: 6 }),
   },
   emblem: {
     position: 'absolute',
@@ -113,11 +106,5 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  arch: {
-    position: 'absolute',
-    left: CX - AR + 2,
-    width: AR * 2 - 4,
-    top: ARCH_TOP + 12,
-    alignItems: 'center',
-  },
+  arch: { position: 'absolute', left: CX - AR + 2, width: AR * 2 - 4, top: ARCH_TOP + 12, alignItems: 'center' },
 });
