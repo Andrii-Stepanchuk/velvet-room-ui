@@ -8,7 +8,7 @@ import m0001 from './0001_quests_xp_award_day_log.sql';
     journal,
     migrations: {
       m0000,
-m0001
+      m0001
     }
   }
   
