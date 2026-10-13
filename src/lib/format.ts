@@ -69,3 +69,41 @@ export function formatWeekdays(mask: number): string {
 export function formatPercent(fraction: number): string {
   return `+${Math.round(fraction * 100)}%`;
 }
+
+const MONTH_NAMES = [
+  'JANUARY',
+  'FEBRUARY',
+  'MARCH',
+  'APRIL',
+  'MAY',
+  'JUNE',
+  'JULY',
+  'AUGUST',
+  'SEPTEMBER',
+  'OCTOBER',
+  'NOVEMBER',
+  'DECEMBER',
+] as const;
+
+const SPOKEN_WEEKDAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'] as const;
+
+export function formatWeekday(date: Date): string {
+  return WEEKDAYS[date.getDay()];
+}
+
+export function formatMonthName(date: Date): string {
+  return MONTH_NAMES[date.getMonth()];
+}
+
+export function formatClock(date: Date): string {
+  return `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
+}
+
+export function formatJournalDay(date: Date, isToday: boolean): string {
+  return isToday ? `TODAY · ${formatShortDate(date)}` : formatDayLabel(date);
+}
+
+export function spokenDate(date: Date): string {
+  const month = MONTH_NAMES[date.getMonth()];
+  return `${SPOKEN_WEEKDAYS[date.getDay()]}, ${month.charAt(0)}${month.slice(1).toLowerCase()} ${date.getDate()}`;
+}

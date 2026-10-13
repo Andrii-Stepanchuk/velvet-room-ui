@@ -11,3 +11,4 @@ export * from './streak';
 export * from './blessings';
 export * from './award';
 export * from './sky';
+export * from './journal';

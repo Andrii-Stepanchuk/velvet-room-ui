@@ -25,6 +25,7 @@ export function useQuests() {
       archive: (ids: readonly number[]) => questRepository.archive(ids),
       move: questRepository.move,
       seedDemo: questRepository.seedDemo,
+      seedHistory: (days: number) => xpAwardRepository.seedHistory(days),
       clear,
       undo: (id: number) => xpAwardRepository.undo(id),
     }),

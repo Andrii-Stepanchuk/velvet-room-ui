@@ -15,10 +15,12 @@ export const TestingSection = memo(function TestingSection({
   rows,
   onToggle,
   onSeedQuests,
+  onSeedJournal,
 }: {
   rows: readonly TestingRow[];
   onToggle: (key: BoostOverrideKey) => void;
   onSeedQuests: () => void;
+  onSeedJournal: () => void;
 }) {
   return (
     <View>
@@ -49,6 +51,14 @@ export const TestingSection = memo(function TestingSection({
       ))}
       <View className="mt-4">
         <ActionPlate label="SEED DEMO QUESTS" chevron onPress={onSeedQuests} accessibilityHint="Adds six daily demo quests" />
+      </View>
+      <View className="mt-3">
+        <ActionPlate
+          label="SEED JOURNAL HISTORY"
+          chevron
+          onPress={onSeedJournal}
+          accessibilityHint="Writes past clears for the daily quests"
+        />
       </View>
     </View>
   );

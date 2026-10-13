@@ -3,6 +3,7 @@ import { createNativeStackNavigator, type NativeStackNavigationOptions } from '@
 import type { RootStackParamList } from './navigation.types';
 import { usePlayer } from '@/lib/data/hooks';
 import { RegisterPage } from '@/pages/auth/RegisterPage';
+import { JournalPage } from '@/pages/journal/JournalPage';
 import { MenuPage } from '@/pages/menu/MenuPage';
 import { SettingsPage } from '@/pages/settings/SettingsPage';
 import { StatDetailPage } from '@/pages/statDetail/StatDetailPage';
@@ -32,6 +33,7 @@ export function RootNavigator() {
         <Stack.Screen name="Settings" component={SettingsPage} options={IN_SCENE} />
         <Stack.Screen name="Stats" component={StatsPage} options={IN_SCENE} />
         <Stack.Screen name="Tasks" component={TasksPage} options={IN_SCENE} />
+        <Stack.Screen name="Journal" component={JournalPage} options={IN_SCENE} />
         <Stack.Screen name="StatDetail" component={StatDetailPage} options={IN_SCENE} />
       </Stack.Navigator>
     </NavigationContainer>

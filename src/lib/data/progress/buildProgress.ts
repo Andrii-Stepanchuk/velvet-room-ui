@@ -21,6 +21,7 @@ export interface Progress {
   today: DayKey;
   catalog: readonly QuestRow[];
   ledger: readonly XpAwardRow[];
+  dayLogs: readonly DayLogRow[];
   totals: StatTotals;
   stats: readonly StatLevel[];
   overall: OverallLevel;
@@ -47,6 +48,7 @@ export function buildProgress(
     today,
     catalog: quests,
     ledger,
+    dayLogs,
     totals,
     stats,
     overall: overallFromTotal(overallTotal),

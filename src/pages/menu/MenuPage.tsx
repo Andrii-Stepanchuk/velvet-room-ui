@@ -27,6 +27,7 @@ export function MenuPage() {
       if (item.target === 'Status') navigation.goBack();
       if (item.target === 'Tasks') leave(() => navigation.navigate('Tasks'));
       if (item.target === 'Stats') leave(() => navigation.navigate('Stats'));
+      if (item.target === 'Journal') leave(() => navigation.navigate('Journal'));
       if (item.target === 'Settings') leave(() => navigation.navigate('Settings'));
     },
     [leave, navigation],

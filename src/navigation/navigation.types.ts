@@ -7,5 +7,6 @@ export type RootStackParamList = {
   Settings: undefined;
   Stats: undefined;
   Tasks: undefined;
+  Journal: undefined;
   StatDetail: { stat: StatKey };
 };

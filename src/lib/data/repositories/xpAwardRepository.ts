@@ -3,6 +3,7 @@ import { and, eq, sql } from 'drizzle-orm';
 import { getDb } from '@/lib/db/client';
 import { xpAward, dayLog, quest, type XpAwardRow } from '@/lib/db/schema';
 import {
+  addDays,
   boostsAt,
   canClearOn,
   computeAward,
@@ -11,11 +12,15 @@ import {
   emptyTotals,
   entriesForDay,
   opensDarkHourEarly,
+  parseDay,
   progressFromTotal,
+  questBaseXp,
+  roundHalfUp,
   statProgressFromTotals,
   streakFrom,
   tallyDay,
   type Award,
+  type DayKey,
   type SkyOverrides,
   type StatKey,
   type StatTotals,
@@ -105,6 +110,14 @@ function clearOne(tx: Tx, questId: number, clock: Date, overrides: SkyOverrides)
   };
 }
 
+function chance(day: DayKey, questId: number): number {
+  let h = 2166136261;
+  for (const ch of `${day}:${questId}`) h = Math.imul(h ^ ch.charCodeAt(0), 16777619);
+  return ((h >>> 0) % 1000) / 1000;
+}
+
+const HISTORY_HOURS = [7, 8, 9, 12, 13, 17, 18, 19, 21, 22] as const;
+
 export const xpAwardRepository = {
   query() {
     return getDb().select().from(xpAward);
@@ -133,5 +146,60 @@ export const xpAwardRepository = {
       .returning()
       .get();
     return removed ?? null;
+  },
+
+  seedHistory(days: number, clock: Date = new Date()): number {
+    const today = dayKey(clock);
+    const start = addDays(today, -days);
+    return getDb().transaction((tx) => {
+      const live = tx.select().from(quest).all().filter((q) => q.archivedAt === null && q.repeat === 'daily');
+      if (live.length === 0) return 0;
+      for (const q of live) {
+        if (dayKey(q.createdAt) > start) tx.update(quest).set({ createdAt: parseDay(start) }).where(eq(quest.id, q.id)).run();
+      }
+      const arcanaId = deriveArcana(statProgressFromTotals(totalsFrom(tx))).id;
+      let written = 0;
+      for (let day = start; day < today; day = addDays(day, 1)) {
+        const rest = chance(day, 0) < 0.12;
+        for (const q of live) {
+          if (rest || chance(day, q.id) < 0.35) continue;
+          const at = parseDay(day);
+          at.setHours(HISTORY_HOURS[Math.floor(chance(day, q.id * 7) * HISTORY_HOURS.length)], Math.floor(chance(day, q.id * 13) * 60));
+          const boosts = boostsAt(at);
+          const base = questBaseXp(q.effort, q.challenge);
+          const inserted = tx
+            .insert(xpAward)
+            .values({
+              questId: q.id,
+              day,
+              completedAt: at,
+              stat: q.stat,
+              titleSnapshot: q.title,
+              baseXp: base,
+              moonMult: boosts.multiplier,
+              darkHour: boosts.darkHour,
+              fullMoon: boosts.fullMoon,
+              arcanaId,
+              blessingPct: 0,
+              awardedXp: roundHalfUp(base * boosts.multiplier),
+            })
+            .onConflictDoNothing()
+            .returning({ id: xpAward.id })
+            .all();
+          written += inserted.length;
+        }
+      }
+      const quests = tx.select().from(quest).all();
+      const ledger = tx.select().from(xpAward).all();
+      const now = new Date();
+      for (let day = start; day < today; day = addDays(day, 1)) {
+        const tally = tallyDay(entriesForDay(quests, ledger, day, today));
+        tx.insert(dayLog)
+          .values({ day, ...tally, finalizedAt: now })
+          .onConflictDoUpdate({ target: dayLog.day, set: { ...tally, finalizedAt: now } })
+          .run();
+      }
+      return written;
+    });
   },
 };
