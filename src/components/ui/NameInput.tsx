@@ -39,6 +39,8 @@ export function NameInput({
         onChangeText={onChangeText}
         onFocus={onFocus}
         onBlur={onBlur}
+        returnKeyType="done"
+        submitBehavior="blurAndSubmit"
         autoCapitalize="characters"
         autoCorrect={false}
         maxLength={18}

@@ -69,7 +69,7 @@ export const QuestForge = memo(function QuestForge({
   onDelete: () => void;
 }) {
   const insets = useSafeAreaInsets();
-  const { width, height, rise, backdrop, sheet } = useForgeSheetStyles(progress);
+  const { width, height, rise, keyboardOffset, backdrop, sheet } = useForgeSheetStyles(progress);
   const { draft, set, valid, base, live, editing } = useQuestForm(quest, defaults, preview);
   const submit = useCallback(() => {
     if (valid) onSubmit({ ...draft, note: draft.note ?? null });
@@ -89,7 +89,11 @@ export const QuestForge = memo(function QuestForge({
       </Animated.View>
       <Animated.View style={[styles.sheet, { height: height + FORGE.lift }, sheet]}>
         <SheetSurface width={width} height={height + rise} rise={rise} top={FORGE.lift - rise} gradientId="forgeField" />
-        <KeyboardAvoidingView behavior="padding" style={[styles.body, { marginTop: FORGE.lift + rise }]}>
+        <KeyboardAvoidingView
+          behavior="padding"
+          keyboardVerticalOffset={keyboardOffset - insets.bottom}
+          style={[styles.body, { marginTop: FORGE.lift + rise }]}
+        >
           <View className="flex-row items-center justify-between" style={styles.padded}>
             <Text
               accessibilityRole="header"

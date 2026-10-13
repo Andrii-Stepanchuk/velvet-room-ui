@@ -58,10 +58,11 @@ export function useTaskList(filters: TaskFilterState, preview: AwardPreview) {
     const toItem = (entry: TodayEntry | { quest: QuestRow; day: DayKey; done: boolean; award: XpAwardRow | null; carriedFrom: DayKey | null }, meta?: string): TaskItem => {
       const { quest, day, done, award } = entry;
       const isToday = day === today;
+      const clearable = !done && (isToday ? canClearOn(quest, today, ledger) : quest.repeat === 'once');
       const priced =
         done && award
           ? null
-          : isToday
+          : isToday || clearable
             ? preview({ questId: quest.id, stat: quest.stat, effort: quest.effort, challenge: quest.challenge })
             : { awarded: questBaseXp(quest.effort, quest.challenge), moonMult: 1, blessingPct: 0 };
       const carried = entry.carriedFrom ? `FROM ${formatShortDate(parseDay(entry.carriedFrom))}` : '';
@@ -74,7 +75,7 @@ export function useTaskList(filters: TaskFilterState, preview: AwardPreview) {
         xp: award ? award.awardedXp : (priced?.awarded ?? 0),
         moonMult: award ? award.moonMult : (priced?.moonMult ?? 1),
         blessed: award ? award.blessingPct > 0 : (priced?.blessingPct ?? 0) > 0,
-        clearable: !done && (isToday ? canClearOn(quest, today, ledger) : quest.repeat === 'once'),
+        clearable,
         undoable: done && award?.day === today,
         meta: meta ?? (carried || repeatMeta(quest)),
       };

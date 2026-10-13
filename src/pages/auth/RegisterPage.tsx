@@ -1,4 +1,4 @@
-import { StyleSheet, View } from 'react-native';
+import { KeyboardAvoidingView, StyleSheet, View } from 'react-native';
 import Animated from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -58,12 +58,19 @@ export function RegisterPage() {
       </Animated.View>
 
       {!replay && (
-        <Animated.View
-          pointerEvents={atGate ? 'auto' : 'none'}
-          style={[styles.bottom, { paddingBottom: insets.bottom + 28 }, layer.form]}
+        <KeyboardAvoidingView
+          behavior="padding"
+          keyboardVerticalOffset={-insets.bottom}
+          pointerEvents="box-none"
+          style={styles.keyboardLayer}
         >
-          <RegisterForm onSubmit={seq.begin} />
-        </Animated.View>
+          <Animated.View
+            pointerEvents={atGate ? 'auto' : 'none'}
+            style={[{ paddingBottom: insets.bottom + 28 }, layer.form]}
+          >
+            <RegisterForm onSubmit={seq.begin} />
+          </Animated.View>
+        </KeyboardAvoidingView>
       )}
 
       <ContinuePrompt
@@ -81,5 +88,5 @@ export function RegisterPage() {
 const styles = StyleSheet.create({
   videoLayer: { ...StyleSheet.absoluteFill, backgroundColor: CLIP_FIRST_FRAME_COLOR },
   top: { position: 'absolute', left: 0, right: 0 },
-  bottom: { position: 'absolute', left: 0, right: 0, bottom: 0 },
+  keyboardLayer: { ...StyleSheet.absoluteFill, justifyContent: 'flex-end' },
 });

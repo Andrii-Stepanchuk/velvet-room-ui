@@ -79,11 +79,16 @@ export function fortuneHash(input: string): number {
     hash ^= input.charCodeAt(i);
     hash = Math.imul(hash, 0x01000193) >>> 0;
   }
+  hash ^= hash >>> 16;
+  hash = Math.imul(hash, 0x85ebca6b);
+  hash ^= hash >>> 13;
+  hash = Math.imul(hash, 0xc2b2ae35);
+  hash ^= hash >>> 16;
   return hash >>> 0;
 }
 
 export function isFortuneTurned(questId: number, day: DayKey): boolean {
-  return fortuneHash(`${questId}:${day}`) % CONFIG.blessings.fortuneOdds === 0;
+  return questId > 0 && fortuneHash(`${questId}:${day}`) % CONFIG.blessings.fortuneOdds === 0;
 }
 
 function lowestStats(stats: readonly StatProgress[]): StatKey[] {

@@ -46,7 +46,7 @@ export function moonDialLabel(phaseName: string, daysUntilFullMoon: number): str
 }
 
 export function moonCaption(phaseName: string, cycle: LunarCycle): { text: string; label: string } {
-  const day = cycle.dayIndex + 1;
+  const day = cycle.dayIndex;
   return {
     text: `${phaseName.toUpperCase()} · DAY ${day}/${cycle.length}`,
     label: `${phaseName}, day ${day} of ${cycle.length}`,

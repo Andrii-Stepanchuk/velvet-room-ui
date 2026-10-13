@@ -1,6 +1,7 @@
 import { describe, expect, it } from '@jest/globals';
 import { blessingBonus, fortuneHash, isFortuneTurned, opensDarkHourEarly } from '../blessings';
 import { ARCANA } from '../arcanaData';
+import { nextDays } from '../schedule';
 import { at, ctx, stats } from './helpers';
 
 const NIGHT = { darkHour: true, fullMoon: false, multiplier: 1.5 };
@@ -108,5 +109,16 @@ describe('Fortune', () => {
     for (let id = 1; id <= samples; id += 1) if (isFortuneTurned(id, '2026-10-06')) turned += 1;
     expect(turned / samples).toBeGreaterThan(0.1);
     expect(turned / samples).toBeLessThan(0.15);
+  });
+
+  it('rerolls independently per quest and per day', () => {
+    const days = nextDays('2026-01-01', 365);
+    expect(days.some((day) => isFortuneTurned(1, day) !== isFortuneTurned(9, day))).toBe(true);
+    const ids = Array.from({ length: 60 }, (_, i) => i + 1);
+    expect(ids.some((id) => isFortuneTurned(id, '2026-10-01') !== isFortuneTurned(id, '2026-10-09'))).toBe(true);
+  });
+
+  it('never turns a quest that has no id yet', () => {
+    expect(nextDays('2026-01-01', 365).some((day) => isFortuneTurned(-1, day) || isFortuneTurned(0, day))).toBe(false);
   });
 });
