@@ -1,5 +1,5 @@
-import { useCallback } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { useCallback, useMemo } from 'react';
+import { StyleSheet, View, type LayoutChangeEvent } from 'react-native';
 import Animated from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
@@ -33,7 +33,17 @@ export function StatusPage() {
   const { progress, leaving, leave } = useScreenTransition();
   const model = useStatusModel();
   const moonSize = useMoonSize();
-  const moonHandoff = useMoonHandoff(progress, moonSize);
+  const moonHandoff = useMoonHandoff(progress, moonSize.size);
+  const moonStage = useMemo(() => [styles.moonStage, { flexBasis: moonSize.ideal }], [moonSize.ideal]);
+  const { onLayout: measureMoon } = moonSize;
+  const { onLayout: anchorMoon } = moonHandoff;
+  const onMoonLayout = useCallback(
+    (e: LayoutChangeEvent) => {
+      measureMoon(e);
+      anchorMoon(e);
+    },
+    [measureMoon, anchorMoon],
+  );
   const layers = useStatusLayers(progress);
   const arcanaSheet = useSheet(ARCANA_SHEET);
   const openMenu = useCallback(() => leave(() => navigation.navigate('Menu')), [leave, navigation]);
@@ -62,26 +72,30 @@ export function StatusPage() {
             <MenuButton onPress={openMenu} />
           </Animated.View>
         </View>
-        <Animated.View style={[styles.countdown, layers.countdown]}>
+        <View style={styles.countdownGap} />
+        <Animated.View style={layers.countdown}>
           <CountdownLockup daysUntilFullMoon={model.daysUntilFullMoon} boosts={model.boosts} />
         </Animated.View>
 
-        <Animated.View onLayout={moonHandoff.onLayout} style={[styles.moon, moonHandoff.style]}>
+        <View style={styles.moonTopGap} />
+        <Animated.View onLayout={onMoonLayout} style={[moonStage, moonHandoff.style]}>
           <MoonEmblem
             moon={model.moon}
             cycle={model.cycle}
-            size={moonSize}
+            size={moonSize.size}
             daysUntilFullMoon={model.daysUntilFullMoon}
             boosts={model.boosts}
             progress={progress}
             dialStyle={moonHandoff.dialStyle}
           />
         </Animated.View>
-        <Animated.View style={[styles.moonCaption, layers.countdown]}>
+        <View style={styles.moonCaptionGap} />
+        <Animated.View style={layers.countdown}>
           <MoonCaption moon={model.moon} cycle={model.cycle} />
         </Animated.View>
 
-        <Animated.View style={[styles.identity, layers.identity]}>
+        <View style={styles.identityGap} />
+        <Animated.View style={layers.identity}>
           <IdentityBadge
             name={model.name}
             level={model.overall.level}
@@ -89,13 +103,16 @@ export function StatusPage() {
             onArcanaPress={arcanaSheet.show}
           />
         </Animated.View>
-        <Animated.View style={[styles.xp, layers.xp]}>
+        <View style={styles.xpGap} />
+        <Animated.View style={layers.xp}>
           <XpBar xp={model.overall.xp} fraction={model.xpFraction} toNext={model.xpToNext} />
         </Animated.View>
-        <Animated.View style={[styles.stats, layers.stats]}>
+        <View style={styles.statsGap} />
+        <Animated.View style={layers.stats}>
           <StatRow stats={model.stats} onOpen={openStat} />
         </Animated.View>
-        <Animated.View style={[styles.quests, layers.quests]}>
+        <View style={styles.questsGap} />
+        <Animated.View style={layers.quests}>
           <QuestCard summary={model.questSummary} message={model.questMessage} onPress={openTasks} />
         </Animated.View>
       </View>
@@ -107,12 +124,15 @@ export function StatusPage() {
   );
 }
 
+const gap = (height: number) => ({ flexBasis: height, flexShrink: 1 });
+
 const styles = StyleSheet.create({
-  countdown: { marginTop: SECTION_GAP.countdown },
-  moon: { alignSelf: 'center', marginTop: SECTION_GAP.moonTop },
-  moonCaption: { marginTop: SECTION_GAP.moonCaption },
-  identity: { marginTop: SECTION_GAP.identity },
-  xp: { marginTop: SECTION_GAP.xp },
-  stats: { marginTop: SECTION_GAP.stats },
-  quests: { marginTop: SECTION_GAP.quests },
+  countdownGap: gap(SECTION_GAP.countdown),
+  moonTopGap: gap(SECTION_GAP.moonTop),
+  moonStage: { flexShrink: 1, alignItems: 'center', justifyContent: 'center' },
+  moonCaptionGap: gap(SECTION_GAP.moonCaption),
+  identityGap: gap(SECTION_GAP.identity),
+  xpGap: gap(SECTION_GAP.xp),
+  statsGap: gap(SECTION_GAP.stats),
+  questsGap: gap(SECTION_GAP.quests),
 });

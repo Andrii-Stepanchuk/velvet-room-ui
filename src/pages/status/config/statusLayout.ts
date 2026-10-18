@@ -14,6 +14,8 @@ export const MOON_DIAL = {
 } as const;
 export const STAT_ORB = { size: 58, ring: 3, icon: 24, inset: 10, maxFontScale: 1.3 } as const;
 export const SECTION_GAP = { countdown: 20, moonTop: 8, moonCaption: 8, identity: 14, xp: 14, stats: 28, quests: 18 } as const;
+export const STATUS_TEXT = { maxFontScale: 1.3 } as const;
+export const IDENTITY_NAME = { maxFontScale: 1.15 } as const;
 export const ARCANA_TAG = {
   height: 44,
   slant: 12,

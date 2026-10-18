@@ -3,6 +3,7 @@ import { Text, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 
 import { colors } from '@/constants/theme';
+import { STATUS_TEXT } from '../config/statusLayout';
 
 const FILL = [colors.glow[500], colors.accent] as const;
 
@@ -18,8 +19,12 @@ export const XpBar = memo(function XpBar({ xp, fraction, toNext }: { xp: number;
         />
       </View>
       <View className="mt-2 flex-row justify-between">
-        <Text className="font-body-medium text-xs text-secondary">{xp} XP</Text>
-        <Text className="font-body-medium text-xs text-secondary">{toNext} XP to next level</Text>
+        <Text maxFontSizeMultiplier={STATUS_TEXT.maxFontScale} className="font-body-medium text-xs text-secondary">
+          {xp} XP
+        </Text>
+        <Text maxFontSizeMultiplier={STATUS_TEXT.maxFontScale} className="font-body-medium text-xs text-secondary">
+          {toNext} XP to next level
+        </Text>
       </View>
     </View>
   );
